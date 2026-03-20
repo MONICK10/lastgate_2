@@ -1,0 +1,36 @@
+.character {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  z-index: 20;
+  transition: none; /* No transition for smooth real-time movement */
+  transform: scaleX(1);
+}
+
+.character.flipped {
+  transform: scaleX(-1);
+}
+
+.character .sprite {
+  width: 100%;
+  height: 100%;
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position: 0 0;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  /* When using sprite sheets, add: */
+  /* background-image: url('/assets/sprites/walk.png'); */
+}
+
+/* Optional: Debug mode - uncomment to see collision box */
+/*.character::before {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 32px;
+  width: 32px;
+  height: 32px;
+  border: 2px dashed lime;
+  pointer-events: none;
+}*/
