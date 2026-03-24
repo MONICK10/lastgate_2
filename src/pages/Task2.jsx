@@ -1,324 +1,437 @@
-// Task2.jsx
-
+import React, { useState, useEffect, useRef, createContext, useContext } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useGLTF, useAnimations } from "@react-three/drei";
-import { Suspense, useRef, useEffect, useState } from "react";
-import * as THREE from "three";
+import { Text, Sky, PerspectiveCamera } from "@react-three/drei";
+import { Vector3 } from "three";
+import { useNavigate } from "react-router-dom";
+import { GameContext } from "../context/GameContext";
+import "./Task2.css";
 
-/* =========================
-   ROAD
-========================= */
-function Road({ roadRef }) {
-  const { scene } = useGLTF("/assets/road.glb");
+// Create shared player position context
+const PlayerContext = createContext();
 
-  useEffect(() => {
-    scene.traverse((child) => {
-      if (child.isMesh) {
-        child.castShadow = true;
-        child.receiveShadow = true;
+// ============================================
+// HELPER: Random Floor Position
+// ============================================
+const randomFloorPosition = () => {
+  const x = (Math.random() - 0.5) * 100;
+  const z = (Math.random() - 0.5) * 100;
+  return [x, 1, z];
+};
+
+// ============================================
+// COLLECTABLES - ALPHABET LETTERS
+// ============================================
+function AlphabetCollectable({ letter, position, collected, onCollect }) {
+  const meshRef = useRef(null);
+  const playerContext = useContext(PlayerContext);
+  
+  useFrame(({ clock }) => {
+    if (meshRef.current && !collected) {
+      meshRef.current.rotation.y += 0.02;
+      meshRef.current.position.y = position[1] + Math.sin(clock.elapsedTime * 2) * 0.3;
+      
+      // Check collision with player
+      if (playerContext && playerContext.position) {
+        const dist = playerContext.position.distanceTo(new Vector3(...position));
+        if (dist < 2) {
+          onCollect(letter);
+        }
       }
-    });
-  }, [scene]);
-
-  return (
-    <primitive
-      ref={roadRef}
-      object={scene}
-      scale={10}
-      position={[0, -200, 0]}
-      rotation={[0, Math.PI / 2, 0]}
-    />
-  );
-}
-
-/* =========================
-   CHARACTER
-========================= */
-function Character({ playerRef, roadRef, gameStarted }) {
-  const modelRef = useRef();
-  const currentAction = useRef(null);
-
-  const runGltf = useGLTF("/assets/run.glb");
-  const { actions, names } = useAnimations(runGltf.animations, modelRef);
-  const runName = names?.[0];
-
-  const keys = useRef({
-    left: false,
-    right: false,
-  });
-
-  const downRay = useRef(new THREE.Raycaster());
-  const PLAYER_HEIGHT = 1.6;
-
-  /* =========================
-     KEYBOARD INPUT
-  ========================= */
-  useEffect(() => {
-    const down = (e) => {
-      if (!gameStarted) return;
-
-      if (e.key === "ArrowLeft") keys.current.left = true;
-      if (e.key === "ArrowRight") keys.current.right = true;
-    };
-
-    const up = (e) => {
-      if (e.key === "ArrowLeft") keys.current.left = false;
-      if (e.key === "ArrowRight") keys.current.right = false;
-    };
-
-    window.addEventListener("keydown", down);
-    window.addEventListener("keyup", up);
-
-    return () => {
-      window.removeEventListener("keydown", down);
-      window.removeEventListener("keyup", up);
-    };
-  }, [gameStarted]);
-
-  /* =========================
-     RUN ANIMATION
-  ========================= */
-  useEffect(() => {
-    if (!actions || !runName) return;
-
-    if (gameStarted) {
-      const action = actions[runName];
-      action.reset();
-      action.setLoop(THREE.LoopRepeat);
-      action.fadeIn(0.2).play();
-      currentAction.current = action;
-    } else {
-      currentAction.current?.fadeOut(0.2);
-      currentAction.current = null;
-    }
-  }, [gameStarted, actions, runName]);
-
-  /* =========================
-     FRAME LOOP
-  ========================= */
-  useFrame((state, delta) => {
-    if (!playerRef.current || !roadRef.current) return;
-    if (!gameStarted) return;
-
-    const player = playerRef.current;
-    const speed = 20 * delta;
-    const rotSpeed = 3 * delta;
-
-    const previousPosition = player.position.clone();
-
-    /* LEFT / RIGHT ROTATION */
-    if (keys.current.left) {
-      player.rotation.y += rotSpeed;
-    }
-
-    if (keys.current.right) {
-      player.rotation.y -= rotSpeed;
-    }
-
-    /* AUTO FORWARD BASED ON FACING DIRECTION */
-    const forward = new THREE.Vector3(0, 0, 1);
-    forward.applyQuaternion(player.quaternion);
-    forward.normalize();
-
-    player.position.add(forward.multiplyScalar(speed));
-
-    /* GROUND LOCK */
-    const pos = player.position;
-
-    downRay.current.set(
-      new THREE.Vector3(pos.x, 50, pos.z),
-      new THREE.Vector3(0, -1, 0)
-    );
-
-    const downHit = downRay.current.intersectObject(
-      roadRef.current,
-      true
-    );
-
-    if (downHit.length > 0) {
-      pos.y = downHit[0].point.y + PLAYER_HEIGHT;
-    } else {
-      player.position.copy(previousPosition);
     }
   });
 
   return (
-    <group
-      ref={playerRef}
-      position={[320.05, -182.64, -297.93]}
-    >
-      {/* Correct 180° rotation */}
-      <group ref={modelRef} rotation={[0, Math.PI*360, 0]}>
-        <primitive
-          object={runGltf.scene}
-          scale={0.3}
-          position={[0, -1.0, 0]}
-        />
-      </group>
+    <group ref={meshRef} position={position}>
+      {!collected && (
+        <>
+          {/* Glowing sphere */}
+          <mesh>
+            <sphereGeometry args={[0.5, 32, 32]} />
+            <meshStandardMaterial
+              color="#00ff00"
+              emissive="#00ff00"
+              emissiveIntensity={0.5}
+              wireframe={false}
+            />
+          </mesh>
+          
+          {/* Letter text */}
+          <Text
+            position={[0, 0, 0.6]}
+            fontSize={0.8}
+            color="#ffffff"
+            anchorX="center"
+            anchorY="middle"
+          >
+            {letter}
+          </Text>
+        </>
+      )}
     </group>
   );
 }
 
-/* =========================
-   CAMERA FOLLOW
-========================= */
-function CameraFollow({ target }) {
-  const yaw = useRef(0);
-  const pitch = useRef(-0.2);
-
-  useEffect(() => {
-    const handleMouseMove = (e) => {
-      if (document.pointerLockElement) {
-        yaw.current -= e.movementX * 0.002;
-        pitch.current -= e.movementY * 0.002;
-
-        pitch.current = Math.max(
-          -Math.PI / 3,
-          Math.min(Math.PI / 6, pitch.current)
-        );
+// ============================================
+// MISSION CYLINDER
+// ============================================
+function MissionCylinder({ unlocked }) {
+  const meshRef = useRef(null);
+  const playerContext = useContext(PlayerContext);
+  const [distToCylinder, setDistToCylinder] = useState(Infinity);
+  
+  useFrame(({ clock }) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.01;
+      
+      if (unlocked) {
+        meshRef.current.material.opacity = 0.3 + Math.sin(clock.elapsedTime * 3) * 0.2;
+        meshRef.current.material.emissiveIntensity = 0.8 + Math.sin(clock.elapsedTime * 2) * 0.3;
       }
-    };
 
-    window.addEventListener("mousemove", handleMouseMove);
-    return () =>
-      window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
-
-  useFrame((state) => {
-    if (!target.current) return;
-
-    const player = target.current;
-
-    const distance = 8;
-    const height = 3;
-
-    const direction = new THREE.Vector3();
-    direction.x = Math.sin(yaw.current) * Math.cos(pitch.current);
-    direction.y = Math.sin(pitch.current);
-    direction.z = Math.cos(yaw.current) * Math.cos(pitch.current);
-
-    const cameraPosition = player.position
-      .clone()
-      .add(direction.multiplyScalar(-distance));
-
-    cameraPosition.y += height;
-
-    state.camera.position.lerp(cameraPosition, 0.1);
-
-    state.camera.lookAt(
-      player.position.x,
-      player.position.y + 1.5,
-      player.position.z
-    );
+      // Check distance to player
+      if (playerContext && playerContext.position) {
+        const dist = playerContext.position.distanceTo(new Vector3(0, 1, 0));
+        setDistToCylinder(dist);
+        
+        if (dist < 2.5 && unlocked) {
+          // Mission complete!
+          playerContext.onMissionComplete && playerContext.onMissionComplete();
+        }
+      }
+    }
   });
 
-  return null;
+  return (
+    <mesh position={[0, 1, 0]} ref={meshRef}>
+      <cylinderGeometry args={[2, 2, 2, 32]} />
+      <meshStandardMaterial
+        color={unlocked ? "#0066ff" : "#888888"}
+        emissive={unlocked ? "#0066ff" : "#000000"}
+        emissiveIntensity={unlocked ? 0.8 : 0}
+        transparent
+        opacity={unlocked ? 0.8 : 0.3}
+      />
+    </mesh>
+  );
 }
 
-/* =========================
-   MAIN
-========================= */
-export default function Task2() {
-  const playerRef = useRef();
-  const roadRef = useRef();
+// ============================================
+// PLAYER - ELEVEN
+// ============================================
+function ElevenCharacter() {
+  const groupRef = useRef(null);
+  const cameraRef = useRef(null);
+  const playerPos = useRef(new Vector3(0, 1, -10));
+  const playerContext = useContext(PlayerContext);
+  const velocity = useRef(new Vector3(0, 0, 0));
+  const direction = useRef(new Vector3(0, 0, 0));
+  
+  const keys = useRef({
+    w: false,
+    a: false,
+    s: false,
+    d: false,
+  });
 
-  const [gameStarted, setGameStarted] = useState(false);
-  const [countdown, setCountdown] = useState(null);
-
-  /* Pointer Lock */
   useEffect(() => {
-    const canvas = document.querySelector("canvas");
-
-    const handleClick = () => {
-      canvas.requestPointerLock();
+    const handleKeyDown = (e) => {
+      const key = e.key.toLowerCase();
+      if (key === "w") keys.current.w = true;
+      if (key === "a") keys.current.a = true;
+      if (key === "s") keys.current.s = true;
+      if (key === "d") keys.current.d = true;
     };
 
-    canvas?.addEventListener("click", handleClick);
-    return () =>
-      canvas?.removeEventListener("click", handleClick);
+    const handleKeyUp = (e) => {
+      const key = e.key.toLowerCase();
+      if (key === "w") keys.current.w = false;
+      if (key === "a") keys.current.a = false;
+      if (key === "s") keys.current.s = false;
+      if (key === "d") keys.current.d = false;
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("keyup", handleKeyUp);
+    };
   }, []);
 
-  /* Start Game with Countdown */
-  const startGame = () => {
-    setCountdown(3);
-    let count = 3;
+  useFrame(() => {
+    if (!groupRef.current) return;
 
-    const interval = setInterval(() => {
-      count--;
+    // Movement
+    const moveSpeed = 0.5;
+    direction.current.set(0, 0, 0);
 
-      if (count > 0) {
-        setCountdown(count);
-      } else {
-        clearInterval(interval);
-        setCountdown("GO!");
+    if (keys.current.w) direction.current.z -= 1;
+    if (keys.current.s) direction.current.z += 1;
+    if (keys.current.a) direction.current.x -= 1;
+    if (keys.current.d) direction.current.x += 1;
 
-        setTimeout(() => {
-          setCountdown(null);
-          setGameStarted(true);
-        }, 800);
-      }
-    }, 1000);
-  };
+    direction.current.normalize();
+    velocity.current.copy(direction.current).multiplyScalar(moveSpeed);
 
-  const stopGame = () => {
-    setGameStarted(false);
-  };
+    // Update position
+    playerPos.current.add(velocity.current);
+    playerPos.current.y = 1; // Keep on ground
+    
+    // Boundary check
+    const boundary = 50;
+    playerPos.current.x = Math.max(-boundary, Math.min(boundary, playerPos.current.x));
+    playerPos.current.z = Math.max(-boundary, Math.min(boundary, playerPos.current.z));
+    
+    groupRef.current.position.copy(playerPos.current);
+    
+    // Update context for collision detection
+    if (playerContext) {
+      playerContext.position = playerPos.current.clone();
+    }
+  });
 
   return (
-    <div style={{ width: "100vw", height: "100vh" }}>
-      {/* UI */}
-      <div
-        style={{
-          position: "absolute",
-          top: 20,
-          left: 20,
-          zIndex: 10,
-        }}
-      >
-        <button onClick={startGame} style={{ marginRight: 10 }}>
-          Start
-        </button>
+    <group ref={groupRef} position={playerPos.current.toArray()}>
+      {/* Character body - glowing sphere with aura */}
+      <mesh>
+        <sphereGeometry args={[0.5, 32, 32]} />
+        <meshStandardMaterial
+          color="#ff00ff"
+          emissive="#ff00ff"
+          emissiveIntensity={0.5}
+        />
+      </mesh>
 
-        <button onClick={stopGame}>Stop</button>
+      {/* Glow aura */}
+      <mesh>
+        <sphereGeometry args={[0.8, 32, 32]} />
+        <meshStandardMaterial
+          color="#ff00ff"
+          emissive="#ff00ff"
+          emissiveIntensity={0.2}
+          transparent
+          opacity={0.2}
+        />
+      </mesh>
+
+      {/* Camera follows character */}
+      <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 3, 5]} />
+    </group>
+  );
+}
+
+// ============================================
+// UPSIDE DOWN ENVIRONMENT
+// ============================================
+function UpsideDownEnvironment() {
+  return (
+    <>
+      {/* Ground */}
+      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+        <planeGeometry args={[200, 200]} />
+        <meshStandardMaterial color="#1a0033" />
+      </mesh>
+
+      {/* Distant mountains */}
+      <mesh position={[0, 40, -100]}>
+        <coneGeometry args={[50, 80, 32]} />
+        <meshStandardMaterial color="#220044" />
+      </mesh>
+      <mesh position={[50, 30, -80]}>
+        <coneGeometry args={[40, 60, 32]} />
+        <meshStandardMaterial color="#330055" />
+      </mesh>
+      <mesh position={[-50, 35, -90]}>
+        <coneGeometry args={[45, 70, 32]} />
+        <meshStandardMaterial color="#220044" />
+      </mesh>
+
+      {/* Blue/purple lighting */}
+      <ambientLight intensity={0.3} color="#0066ff" />
+      <ambientLight intensity={0.2} color="#6600ff" />
+      <pointLight position={[50, 20, 50]} intensity={0.8} color="#0066ff" />
+      <pointLight position={[-50, 20, -50]} intensity={0.6} color="#6600ff" />
+
+      {/* Sky - dark upside down vibe */}
+      <Sky
+        distance={450000}
+        sunPosition={[0, 1, 0]}
+        inclination={0.52}
+        azimuth={0.25}
+        rayleigh={0.5}
+        turbidity={10}
+      />
+    </>
+  );
+}
+
+// ============================================
+// SCENE CONTAINER
+// ============================================
+function GameScene({ collectables, onCollect, onMissionComplete, unlocked }) {
+  const playerContextRef = useRef({
+    position: new Vector3(0, 1, -10),
+    onMissionComplete,
+  });
+
+  return (
+    <PlayerContext.Provider value={playerContextRef.current}>
+      <UpsideDownEnvironment />
+
+      {/* Collectables */}
+      {collectables.map((item) => (
+        <AlphabetCollectable
+          key={item.id}
+          letter={item.letter}
+          position={item.position}
+          collected={item.collected}
+          onCollect={onCollect}
+        />
+      ))}
+
+      {/* Mission Cylinder */}
+      <MissionCylinder unlocked={unlocked} />
+
+      {/* Player - Eleven */}
+      <ElevenCharacter />
+    </PlayerContext.Provider>
+  );
+}
+
+// ============================================
+// MAIN TASK2 COMPONENT
+// ============================================
+export default function Task2() {
+  const navigate = useNavigate();
+  const { completeTask } = useContext(GameContext) || { completeTask: () => {} };
+  const [collectedLetters, setCollectedLetters] = useState(new Set());
+  const [collectables, setCollectables] = useState([]);
+  const [missionComplete, setMissionComplete] = useState(false);
+
+  // Initialize collectables (A-Z)
+  useEffect(() => {
+    const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+    const items = letters.map((letter) => ({
+      id: letter,
+      letter: letter,
+      position: randomFloorPosition(),
+      collected: false,
+    }));
+    setCollectables(items);
+  }, []);
+
+  // Handle letter collection
+  const handleCollect = (letter) => {
+    setCollectedLetters((prev) => {
+      const updated = new Set(prev);
+      if (!updated.has(letter)) {
+        updated.add(letter);
+        
+        // All letters collected - unlock mission
+        if (updated.size === 26) {
+          setMissionComplete(true);
+        }
+      }
+      
+      return updated;
+    });
+
+    // Mark as collected in collectables
+    setCollectables((prev) =>
+      prev.map((item) =>
+        item.letter === letter ? { ...item, collected: true } : item
+      )
+    );
+  };
+
+  const handleMissionComplete = () => {
+    // Small delay before showing completion
+    setTimeout(() => {
+      completeTask(3);
+      navigate("/mission/task3");
+    }, 500);
+  };
+
+  const unlocked = collectedLetters.size === 26;
+
+  return (
+    <div className="task2-container">
+      {/* HUD - Letters Collected */}
+      <div className="task2-hud">
+        <div className="hud-letters">
+          <h3>📜 Letters Collected</h3>
+          <div className="letters-display">
+            {collectedLetters.size} / 26
+          </div>
+          <div className="letters-grid">
+            {Array.from(collectedLetters)
+              .sort()
+              .map((letter) => (
+                <div key={letter} className="letter-item collected">
+                  {letter}
+                </div>
+              ))}
+            {Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+              .filter((l) => !collectedLetters.has(l))
+              .map((letter) => (
+                <div key={letter} className="letter-item missing">
+                  ?
+                </div>
+              ))}
+          </div>
+        </div>
+
+        {/* Mission Status */}
+        <div className="mission-status">
+          {unlocked ? (
+            <div className="status-unlocked">
+              🔓 Mission Cylinder Unlocked!
+              <p>Find the glowing cylinder to complete the mission</p>
+            </div>
+          ) : (
+            <div className="status-locked">
+              🔒 Collect all 26 letters to unlock
+            </div>
+          )}
+        </div>
+
+        {/* Controls */}
+        <div className="controls-info">
+          <p><strong>WASD</strong> - Move</p>
+          <p><strong>Mouse</strong> - Look around</p>
+        </div>
       </div>
 
-      {countdown && (
-        <div
-          style={{
-            position: "absolute",
-            top: "40%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            fontSize: "60px",
-            color: "white",
-            zIndex: 20,
-          }}
-        >
-          {countdown}
+      {/* 3D Canvas */}
+      <Canvas 
+        shadows
+        fog={{ attach: "fog", args: ["#0a0a1a", 10, 200] }}
+      >
+        <GameScene 
+          collectables={collectables} 
+          onCollect={handleCollect}
+          onMissionComplete={handleMissionComplete}
+          unlocked={unlocked}
+        />
+      </Canvas>
+
+      {/* Mission Complete Overlay */}
+      {missionComplete && (
+        <div className="mission-complete-overlay">
+          <div className="mission-complete-card">
+            <h1>🎉 MISSION COMPLETE!</h1>
+            <p>Eleven has restored the signal!</p>
+            <p>The alphabet has been reassembled.</p>
+            <button onClick={() => {
+              completeTask(3);
+              navigate("/mission/task3");
+            }}>
+              Continue
+            </button>
+          </div>
         </div>
       )}
-
-      <Canvas camera={{ position: [0, 5, 10], fov: 50 }} shadows>
-        <color attach="background" args={["#05070d"]} />
-        <fog attach="fog" args={["#0a0f1c", 10, 300]} />
-
-        <ambientLight intensity={0.4} />
-        <directionalLight
-          position={[5, 15, 5]}
-          intensity={1}
-          castShadow
-        />
-
-        <Suspense fallback={null}>
-          <Road roadRef={roadRef} />
-          <Character
-            playerRef={playerRef}
-            roadRef={roadRef}
-            gameStarted={gameStarted}
-          />
-          <CameraFollow target={playerRef} />
-        </Suspense>
-      </Canvas>
     </div>
   );
 }

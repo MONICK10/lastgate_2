@@ -4,10 +4,12 @@ import Home from "./pages/Home";
 import Intro from "./pages/Intro";
 import Task1 from "./pages/Task1";
 import Task2 from "./pages/Task2";
-import Task3 from "./pages/Task3";
 import Complete from "./pages/Complete";
 import PixelTown from "./pages/PixelTown";
 import NetworkingScreen from "./pages/NetworkingScreen";
+import MissionNetworking from "./pages/MissionNetworking";
+import Caesar from "./pages/caeser";
+import Debug from "./pages/debug";
 
 export default function App() {
   return (
@@ -17,9 +19,11 @@ export default function App() {
         <Route path="/intro" element={<Intro />} />
 
         <Route path="/mission/task1" element={<Task1 />} />
+        <Route path="/caesar" element={<Caesar />} />
+        <Route path="/debug" element={<Debug />} />
         <Route path="/mission/task2" element={<Task2 />} />
-        <Route path="/mission/task3" element={<Task3 />} />
         <Route path="/networking" element={<NetworkingScreen />} />
+        <Route path="/missionnetworking" element={<MissionNetworking />} />
         <Route path="/complete" element={<Complete />} />
         <Route path="/pixel-town" element={<PixelTown />} />
       </Routes>

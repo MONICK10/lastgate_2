@@ -868,7 +868,7 @@ export default function Task1() {
   const garageRef = useRef();
 
   const demoPositions = [
-    [20, 0, -100],
+       [20, 0, -100],
     [76, 0, -71.3],
     [-71, 0, -87],
     [-132, 0, -63],
@@ -923,7 +923,7 @@ export default function Task1() {
         alert("All network components collected!");
 
         completeTask(1);
-        setTimeout(()=>navigate("/networking"),500);
+        setTimeout(()=>navigate("/missionnetworking"),500);
 
       }
 
@@ -981,7 +981,7 @@ export default function Task1() {
   inventory={inventory}
   onMissionComplete={() => {
     alert("Entering Networking Screen!"); // optional debug
-    navigate("/networking"); // navigate to NetworkingScreen.jsx
+    navigate("/missionnetworking");
   }}
 />
 

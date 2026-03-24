@@ -1,0 +1,972 @@
+{
+  "nodes": [
+    {
+      "id": "internet-cloud",
+      "data": {
+        "label": "☁️ Internet",
+        "deviceType": "internet",
+        "role": "External Network",
+        "config": {
+          "ip": "203.0.113.0/24",
+          "vlan": "N/A",
+          "description": "Public Internet - ISP Connection"
+        },
+        "problems": [],
+        "style": {
+          "background": "#b3e5fc",
+          "border": "3px solid #0288d1",
+          "padding": "12px",
+          "fontSize": "15px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "8px",
+          "width": "auto",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 500, "y": 50 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "edge-router",
+      "data": {
+        "label": "🛣️ Edge Router",
+        "deviceType": "router",
+        "role": "WAN Gateway",
+        "config": {
+          "ip": "203.0.113.1/24",
+          "vlan": "N/A",
+          "description": "Internet access & NAT"
+        },
+        "problems": [7],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px",
+          "fontSize": "14px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "8px",
+          "width": "80px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 500, "y": 200 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "ho-section-label",
+      "data": {
+        "label": "🏢 HEAD OFFICE",
+        "isLabel": true,
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px 14px",
+          "fontSize": "15px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "4px",
+          "width": "auto"
+        }
+      },
+      "position": { "x": 80, "y": 320 },
+      "type": "custom",
+      "draggable": false,
+      "selectable": false
+    },
+    {
+      "id": "ho-core-switch",
+      "data": {
+        "label": "🔀 Core Switch\n(L3)",
+        "deviceType": "switch",
+        "role": "Layer 3 Switch",
+        "config": {
+          "ip": "192.168.1.1",
+          "vlan": "VLAN 1",
+          "description": "Inter-VLAN Routing"
+        },
+        "problems": [1, 3],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px",
+          "fontSize": "14px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "8px",
+          "width": "85px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 80, "y": 420 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "ho-access-switch-1",
+      "data": {
+        "label": "🔀 SW-HR\nVLAN 10",
+        "deviceType": "switch",
+        "role": "Access Switch",
+        "config": {
+          "ip": "192.168.10.1",
+          "vlan": "VLAN 10",
+          "description": "HR Department"
+        },
+        "problems": [1, 9],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "8px",
+          "width": "75px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": -100, "y": 580 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "ho-access-switch-2",
+      "data": {
+        "label": "🔀 SW-IT\nVLAN 20",
+        "deviceType": "switch",
+        "role": "Access Switch",
+        "config": {
+          "ip": "192.168.20.1",
+          "vlan": "VLAN 20",
+          "description": "IT Department"
+        },
+        "problems": [1, 9],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "8px",
+          "width": "75px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 80, "y": 580 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "ho-access-switch-3",
+      "data": {
+        "label": "🔀 SW-Sales\nVLAN 30",
+        "deviceType": "switch",
+        "role": "Access Switch",
+        "config": {
+          "ip": "192.168.30.1",
+          "vlan": "VLAN 30",
+          "description": "Sales Department"
+        },
+        "problems": [1, 9],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "8px",
+          "width": "75px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 260, "y": 580 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "ho-pc-hr",
+      "data": {
+        "label": "💻 PC-HR",
+        "deviceType": "pc",
+        "role": "Client",
+        "config": {
+          "ip": "192.168.10.10",
+          "gateway": "192.168.1.254",
+          "vlan": "10",
+          "department": "HR"
+        },
+        "problems": [2],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "2px solid #d32f2f",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "65px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": -100, "y": 750 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "ho-pc-it-1",
+      "data": {
+        "label": "💻 PC-IT1",
+        "deviceType": "pc",
+        "role": "Client",
+        "config": {
+          "ip": "192.168.20.25",
+          "gateway": "192.168.20.1",
+          "vlan": "20",
+          "department": "IT"
+        },
+        "problems": [],
+        "style": {
+          "background": "#fff9c4",
+          "border": "2px solid #f57f17",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "65px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 40, "y": 750 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "ho-pc-it-2",
+      "data": {
+        "label": "💻 PC-IT2",
+        "deviceType": "pc",
+        "role": "Client",
+        "config": {
+          "ip": "192.168.20.51",
+          "gateway": "192.168.20.1",
+          "vlan": "20",
+          "department": "IT"
+        },
+        "problems": [8],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "2px solid #d32f2f",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "65px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 120, "y": 750 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "ho-pc-sales",
+      "data": {
+        "label": "💻 PC-Sales",
+        "deviceType": "pc",
+        "role": "Client",
+        "config": {
+          "ip": "192.168.30.10",
+          "gateway": "192.168.30.1",
+          "vlan": "30",
+          "department": "Sales"
+        },
+        "problems": [],
+        "style": {
+          "background": "#fff9c4",
+          "border": "2px solid #f57f17",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "65px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 260, "y": 750 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "branch-a-section-label",
+      "data": {
+        "label": "🏪 BRANCH A",
+        "isLabel": true,
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px 14px",
+          "fontSize": "15px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "4px",
+          "width": "auto"
+        }
+      },
+      "position": { "x": -200, "y": 320 },
+      "type": "custom",
+      "draggable": false,
+      "selectable": false
+    },
+    {
+      "id": "branch-a-router",
+      "data": {
+        "label": "🛣️ Router-A",
+        "deviceType": "router",
+        "role": "Branch Router",
+        "config": {
+          "ip": "172.16.0.1",
+          "vlan": "N/A",
+          "description": "Branch A WAN"
+        },
+        "problems": [4],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px",
+          "fontSize": "14px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "8px",
+          "width": "80px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": -200, "y": 420 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "branch-a-switch",
+      "data": {
+        "label": "🔀 SW-A",
+        "deviceType": "switch",
+        "role": "Branch Switch",
+        "config": {
+          "ip": "172.16.1.1",
+          "vlan": "VLAN 40",
+          "description": "Branch A Local"
+        },
+        "problems": [],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "2px solid #d32f2f",
+          "padding": "10px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "8px",
+          "width": "70px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": -200, "y": 580 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "branch-a-pc",
+      "data": {
+        "label": "💻 PC-A",
+        "deviceType": "pc",
+        "role": "Client",
+        "config": {
+          "ip": "172.16.1.10",
+          "gateway": "172.16.0.1",
+          "vlan": "40",
+          "branch": "A"
+        },
+        "problems": [],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "2px solid #d32f2f",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "65px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": -200, "y": 750 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "branch-b-section-label",
+      "data": {
+        "label": "🏪 BRANCH B",
+        "isLabel": true,
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px 14px",
+          "fontSize": "15px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "4px",
+          "width": "auto"
+        }
+      },
+      "position": { "x": -50, "y": 320 },
+      "type": "custom",
+      "draggable": false,
+      "selectable": false
+    },
+    {
+      "id": "branch-b-router",
+      "data": {
+        "label": "🛣️ Router-B",
+        "deviceType": "router",
+        "role": "Branch Router",
+        "config": {
+          "ip": "172.17.0.1",
+          "vlan": "N/A",
+          "description": "Branch B WAN"
+        },
+        "problems": [5],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px",
+          "fontSize": "14px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "8px",
+          "width": "80px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": -50, "y": 420 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "branch-b-switch",
+      "data": {
+        "label": "🔀 SW-B",
+        "deviceType": "switch",
+        "role": "Branch Switch",
+        "config": {
+          "ip": "172.17.1.1",
+          "vlan": "VLAN 50",
+          "description": "Branch B Local"
+        },
+        "problems": [],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "2px solid #d32f2f",
+          "padding": "10px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "8px",
+          "width": "70px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": -50, "y": 580 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "branch-b-pc",
+      "data": {
+        "label": "💻 PC-B",
+        "deviceType": "pc",
+        "role": "Client",
+        "config": {
+          "ip": "172.17.1.10",
+          "gateway": "172.17.0.1",
+          "vlan": "50",
+          "branch": "B"
+        },
+        "problems": [],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "2px solid #d32f2f",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "65px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": -50, "y": 750 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "dc-section-label",
+      "data": {
+        "label": "🖥️ DATA CENTER",
+        "isLabel": true,
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px 14px",
+          "fontSize": "15px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "4px",
+          "width": "auto"
+        }
+      },
+      "position": { "x": 500, "y": 320 },
+      "type": "custom",
+      "draggable": false,
+      "selectable": false
+    },
+    {
+      "id": "dc-router",
+      "data": {
+        "label": "🛣️ DC Router",
+        "deviceType": "router",
+        "role": "Data Center Gateway",
+        "config": {
+          "ip": "10.0.0.254",
+          "vlan": "N/A",
+          "description": "DC Access"
+        },
+        "problems": [],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "10px",
+          "fontSize": "14px",
+          "fontWeight": "bold",
+          "letterSpacing": "1px",
+          "borderRadius": "8px",
+          "width": "80px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 500, "y": 420 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "dc-core-server",
+      "data": {
+        "label": "🖥️ Core Server",
+        "deviceType": "server",
+        "role": "Application Server",
+        "config": {
+          "ip": "10.0.0.10",
+          "gateway": "10.0.0.254",
+          "vlan": "60",
+          "description": "Primary App Server"
+        },
+        "problems": [],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "75px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 350, "y": 580 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "dc-web-server",
+      "data": {
+        "label": "🌐 Web Server",
+        "deviceType": "server",
+        "role": "Web Server",
+        "config": {
+          "ip": "10.0.0.50",
+          "gateway": "10.0.0.254",
+          "vlan": "60",
+          "description": "Public Web Portal"
+        },
+        "problems": [],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "75px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 425, "y": 580 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "dc-db-server",
+      "data": {
+        "label": "🗄️ DB Server",
+        "deviceType": "server",
+        "role": "Database Server",
+        "config": {
+          "ip": "10.0.1.50",
+          "gateway": "10.0.1.254",
+          "vlan": "61",
+          "description": "Production Database"
+        },
+        "problems": [],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "75px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 500, "y": 580 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "dns-server",
+      "data": {
+        "label": "🌐 DNS Server",
+        "deviceType": "server",
+        "role": "DNS Resolver",
+        "config": {
+          "ip": "10.0.0.1",
+          "gateway": "10.0.0.254",
+          "vlan": "60",
+          "description": "Domain Resolution"
+        },
+        "problems": [6],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "2px solid #d32f2f",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "75px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 575, "y": 580 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    },
+    {
+      "id": "dc-backup-server",
+      "data": {
+        "label": "💾 Backup",
+        "deviceType": "server",
+        "role": "Backup Server",
+        "config": {
+          "ip": "10.0.0.100",
+          "gateway": "10.0.0.254",
+          "vlan": "60",
+          "description": "Data Backups"
+        },
+        "problems": [],
+        "style": {
+          "background": "#ffcdd2",
+          "border": "3px solid #d32f2f",
+          "padding": "8px",
+          "fontSize": "13px",
+          "fontWeight": "bold",
+          "letterSpacing": "0.8px",
+          "borderRadius": "6px",
+          "width": "75px",
+          "textAlign": "center"
+        }
+      },
+      "position": { "x": 650, "y": 580 },
+      "type": "custom",
+      "draggable": true,
+      "selectable": true
+    }
+  ],
+  "edges": [
+    {
+      "id": "e-internet-edge",
+      "source": "internet-cloud",
+      "target": "edge-router",
+      "type": "smoothstep",
+      "animated": true,
+      "stroke": "#0288d1",
+      "strokeWidth": 3,
+      "label": "WAN Link",
+      "labelStyle": { "fontSize": "10px", "fontWeight": "bold" }
+    },
+    {
+      "id": "e-edge-ho-core",
+      "source": "edge-router",
+      "target": "ho-core-switch",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 3,
+      "label": "Backbone"
+    },
+    {
+      "id": "e-core-hr-sw",
+      "source": "ho-core-switch",
+      "target": "ho-access-switch-1",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Trunk"
+    },
+    {
+      "id": "e-core-it-sw",
+      "source": "ho-core-switch",
+      "target": "ho-access-switch-2",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Trunk"
+    },
+    {
+      "id": "e-core-sales-sw",
+      "source": "ho-core-switch",
+      "target": "ho-access-switch-3",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Trunk"
+    },
+    {
+      "id": "e-hr-sw-pc",
+      "source": "ho-access-switch-1",
+      "target": "ho-pc-hr",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Access"
+    },
+    {
+      "id": "e-it-sw-pc1",
+      "source": "ho-access-switch-2",
+      "target": "ho-pc-it-1",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Access"
+    },
+    {
+      "id": "e-it-sw-pc2",
+      "source": "ho-access-switch-2",
+      "target": "ho-pc-it-2",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Duplicate IP"
+    },
+    {
+      "id": "e-sales-sw-pc",
+      "source": "ho-access-switch-3",
+      "target": "ho-pc-sales",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Access"
+    },
+    {
+      "id": "e-edge-branch-a",
+      "source": "edge-router",
+      "target": "branch-a-router",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 3,
+      "label": "WAN"
+    },
+    {
+      "id": "e-branch-a-sw",
+      "source": "branch-a-router",
+      "target": "branch-a-switch",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "LAN"
+    },
+    {
+      "id": "e-branch-a-sw-pc",
+      "source": "branch-a-switch",
+      "target": "branch-a-pc",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Access"
+    },
+    {
+      "id": "e-edge-branch-b",
+      "source": "edge-router",
+      "target": "branch-b-router",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 3,
+      "label": "WAN"
+    },
+    {
+      "id": "e-branch-b-sw",
+      "source": "branch-b-router",
+      "target": "branch-b-switch",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "LAN"
+    },
+    {
+      "id": "e-branch-b-sw-pc",
+      "source": "branch-b-switch",
+      "target": "branch-b-pc",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Access"
+    },
+    {
+      "id": "e-edge-dc",
+      "source": "edge-router",
+      "target": "dc-router",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 3,
+      "label": "Secure Link"
+    },
+    {
+      "id": "e-dc-router-core",
+      "source": "dc-router",
+      "target": "dc-core-server",
+      "type": "smoothstep",
+      "animated": true,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "App Tier"
+    },
+    {
+      "id": "e-dc-router-web",
+      "source": "dc-router",
+      "target": "dc-web-server",
+      "type": "smoothstep",
+      "animated": true,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Web Tier"
+    },
+    {
+      "id": "e-dc-router-db",
+      "source": "dc-router",
+      "target": "dc-db-server",
+      "type": "smoothstep",
+      "animated": true,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "DB Tier"
+    },
+    {
+      "id": "e-dc-router-dns",
+      "source": "dc-router",
+      "target": "dns-server",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "DNS"
+    },
+    {
+      "id": "e-dc-router-backup",
+      "source": "dc-router",
+      "target": "dc-backup-server",
+      "type": "smoothstep",
+      "animated": false,
+      "stroke": "#d32f2f",
+      "strokeWidth": 2,
+      "label": "Backup"
+    }
+  ],
+  "metadata": {
+    "version": "2.0",
+    "description": "Enhanced network topology with large spacing and problem indicators",
+    "features": [
+      "Layered layout with clear visual hierarchy",
+      "Extra spacing around Data Center for clarity",
+      "All nodes fully independent with no overlaps",
+      "Curved edges (smoothstep) mimicking real network wires",
+      "Problem badges on affected nodes",
+      "Draggable nodes for student adjustments",
+      "Device configuration data for detail panels",
+      "Hover support for details"
+    ],
+    "layout": {
+      "topLayer": "y: 50-200 (Internet & Edge Router)",
+      "middleLayer": "y: 320-420 (Core infrastructure routing)",
+      "bottomLayer": "y: 580-750 (Endpoints & servers)",
+      "horizontalSpacing": "150-300px between sections",
+      "verticalSpacing": "150-170px between layers",
+      "dataCenterSpacing": "Extra 200px+ separation"
+    }
+  }
+}
