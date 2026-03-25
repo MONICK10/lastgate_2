@@ -1,7 +1,7 @@
 .task2-container {
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100dvh;
   background: linear-gradient(135deg, #0a0a1a 0%, #1a0033 100%);
   overflow: hidden;
   font-family: "Press Start 2P", monospace;
@@ -17,67 +17,67 @@
 }
 
 /* ============================================
-   HUD - Heads Up Display
+   HUD - Heads Up Display (RESPONSIVE)
    ============================================ */
 .task2-hud {
   position: absolute;
-  top: 20px;
-  left: 20px;
-  right: 20px;
+  top: clamp(12px, 3vw, 20px);
+  left: clamp(12px, 3vw, 20px);
+  right: clamp(12px, 3vw, 20px);
   pointer-events: none;
   z-index: 100;
   display: flex;
-  gap: 20px;
+  gap: clamp(12px, 3vw, 20px);
   flex-wrap: wrap;
 }
 
 /* Letters section */
 .hud-letters {
   background: rgba(0, 0, 0, 0.7);
-  border: 3px solid #00ff00;
-  border-radius: 8px;
-  padding: 15px;
-  min-width: 300px;
+  border: 2px solid #00ff00;
+  border-radius: 6px;
+  padding: clamp(10px, 2.5vw, 15px);
+  min-width: clamp(200px, 80vw, 300px);
   box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
   pointer-events: auto;
 }
 
 .hud-letters h3 {
-  margin: 0 0 10px 0;
+  margin: 0 0 8px 0;
   color: #00ff00;
-  font-size: 0.8rem;
+  font-size: clamp(10px, 2vw, 0.8rem);
   text-shadow: 0 0 10px rgba(0, 255, 0, 0.8);
 }
 
 .letters-display {
-  font-size: 1.5rem;
+  font-size: clamp(12px, 3vw, 1.5rem);
   color: #ffff00;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   text-align: center;
   text-shadow: 0 0 10px rgba(255, 255, 0, 0.8);
 }
 
 .letters-grid {
   display: grid;
-  grid-template-columns: repeat(13, 1fr);
-  gap: 5px;
-  padding: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(20px, 1fr));
+  gap: 4px;
+  padding: 8px;
   background: rgba(0, 0, 0, 0.5);
   border-radius: 4px;
-  max-height: 150px;
+  max-height: clamp(80px, 20vh, 150px);
   overflow-y: auto;
 }
 
 .letter-item {
-  width: 30px;
-  height: 30px;
+  width: clamp(18px, 4vw, 30px);
+  height: clamp(18px, 4vw, 30px);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.6rem;
+  font-size: clamp(8px, 1.5vw, 0.6rem);
   font-weight: bold;
-  border: 2px solid;
-  border-radius: 4px;
+  border: 1px solid;
+  border-radius: 3px;
   background: rgba(0, 0, 0, 0.8);
 }
 
@@ -92,6 +92,39 @@
   border-color: #666666;
   color: #666666;
   background: rgba(100, 100, 100, 0.1);
+}
+
+/* Mobile-specific adjustments */
+@media (max-width: 390px) {
+  .task2-hud {
+    flex-direction: column;
+    top: 8px;
+    left: 8px;
+    right: 8px;
+  }
+
+  .hud-letters {
+    min-width: auto;
+    width: 100%;
+  }
+
+  .letters-grid {
+    grid-template-columns: repeat(10, 1fr);
+    gap: 3px;
+    max-height: 70px;
+  }
+}
+
+/* Tablet adjustments */
+@media (min-width: 391px) and (max-width: 767px) {
+  .task2-hud {
+    flex-direction: column;
+  }
+
+  .hud-letters {
+    min-width: auto;
+    width: 100%;
+  }
 }
 
 /* Mission status */

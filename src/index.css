@@ -9,16 +9,20 @@
 html,
 body {
   width: 100%;
-  height: 100%;
+  height: 100dvh;
   overflow: hidden !important;
   background: black;
+  margin: 0;
+  padding: 0;
 }
 
 /* React root must not overflow */
 #root {
   width: 100%;
-  height: 100%;
+  height: 100dvh;
   overflow: hidden !important;
+  margin: 0;
+  padding: 0;
 }
 
 /* Intro screen: absolute fullscreen */

@@ -8,9 +8,22 @@ html, body {
 
 .app-container {
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100dvh;
   overflow: hidden;
+}
+
+/* Mobile-first responsive design */
+@media (max-width: 390px) {
+  .app-container {
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 768px) {
+  .app-container {
+    font-size: 16px;
+  }
 }
 
 /* THREE LAYER */
@@ -73,11 +86,11 @@ html, body {
   100% { transform: translateY(-300px); }
 }
 
-/* DOOR ZONES */
+/* DOOR ZONES (RESPONSIVE) */
 .door-zone {
   position: absolute;
-  width: 80px;
-  height: 120px;
+  width: clamp(50px, 12vw, 80px);
+  height: clamp(80px, 18vw, 120px);
   border-radius: 50px;
   background: linear-gradient(
     to bottom,
@@ -188,46 +201,58 @@ right:20px;
 padding:10px 20px;
 }
 
-/* INVENTORY UI */
+/* INVENTORY UI (RESPONSIVE) */
 .inventory {
   position: absolute;
-  top: 20px;
-  left: 20px;
+  top: clamp(10px, 2vh, 20px);
+  left: clamp(10px, 2vw, 20px);
   background: rgba(0, 0, 0, 0.6);
-  padding: 12px;
-  border-radius: 8px;
+  padding: clamp(8px, 1.5vw, 12px);
+  border-radius: 6px;
   color: white;
   font-family: monospace;
-  font-size: 18px;
+  font-size: clamp(12px, 2.5vw, 18px);
   z-index: 100;
   border: 2px solid #00aaff;
   box-shadow: 0 0 20px rgba(0, 170, 255, 0.3);
+  max-width: 80vw;
 }
 
 .inventory div {
-  margin: 5px 0;
-  letter-spacing: 1px;
+  margin: 3px 0;
+  letter-spacing: 0.5px;
+  word-break: break-word;
 }
 
-/* DEBUG COORDINATE PANEL */
+/* DEBUG COORDINATE PANEL (RESPONSIVE) */
 .coords {
   position: absolute;
-  top: 20px;
-  right: 20px;
+  top: clamp(10px, 2vh, 20px);
+  right: clamp(10px, 2vw, 20px);
   background: rgba(0, 0, 0, 0.6);
-  padding: 10px;
+  padding: clamp(8px, 1.5vw, 10px);
   border-radius: 6px;
   color: #00ffff;
   font-family: monospace;
-  font-size: 16px;
+  font-size: clamp(11px, 2vw, 16px);
   z-index: 100;
   border: 1px solid #00ffff;
   box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+  max-width: 80vw;
 }
 
 .coords div {
-  margin: 3px 0;
-  letter-spacing: 1px;
+  margin: 2px 0;
+  letter-spacing: 0.5px;
+  word-break: break-word;
+}
+
+/* Hide coords on very small screens if needed */
+@media (max-width: 350px) {
+  .coords {
+    font-size: 10px;
+    padding: 6px;
+  }
 }
 
 /* TERMINAL OUTPUT SCROLLBAR STYLING */
