@@ -1,40 +1,140 @@
-/* Full global reset */
+/* RESET */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Kill scrollbars at the source */
 html,
-body {
-  width: 100%;
-  height: 100%;
-  overflow: hidden !important;
-}
-
-/* React root must not overflow */
+body,
 #root {
   width: 100%;
   height: 100%;
-  overflow: hidden !important;
+  overflow: hidden;
 }
 
-/* Intro screen: absolute fullscreen */
+/* FULLSCREEN CONTAINER */
 .intro-screen {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow: hidden !important;
+  inset: 0;
+  overflow: hidden;
 }
+.skip-btn {
+  position: absolute;
+  bottom: 6%;
+  right: 3%;
 
-/* Video fills without using vw/vh (vw causes overflow!) */
-.intro-screen video {
+  padding: 14px 28px;
+  font-size: 16px;
+
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid white;
+  border-radius: 6px;
+
+  cursor: pointer;
+
+  z-index: 999; /* 🔥 SUPER HIGH = always above video */
+}
+/* VIDEO */
+.video {
   width: 100%;
   height: 100%;
   object-fit: cover;
-
   display: block;
+}
+
+/* START BUTTON */
+.start-btn {
+  position: absolute;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+
+  padding: 14px 32px;
+  font-size: 18px;
+  letter-spacing: 2px;
+
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: 1px solid white;
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+  background: white;
+  color: black;
+}
+
+/* FORM SCREEN */
+.form-screen {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* BACKGROUND IMAGE */
+.bg-image {
+  width: 100%;
+  height:100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* FORM BOX (FIXED POSITIONING) */
+.form-box {
+  position: absolute;
+  top: 10%; /* 🔥 KEY FIX — prevents covering title */
+  left: 50%;
+  transform: translateX(-50%);
+
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+
+  padding: 30px;
+
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px); /* 🔥 glass effect */
+
+  color: white;
+  width: min(90%, 350px);
+  text-align: center;
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* TITLE */
+.form-box h2 {
+  font-size: clamp(18px, 2vw, 22px);
+  letter-spacing: 1px;
+}
+
+/* INPUTS */
+.form-box input {
+  padding: 10px;
+  border: none;
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.9);
+}
+
+/* BUTTON */
+.form-box button {
+  padding: 12px;
+  border: none;
+  cursor: pointer;
+
+  background: white;
+  color: black;
+  font-weight: bold;
+  letter-spacing: 1px;
+
+  transition: 0.3s;
+}
+
+.form-box button:hover {
+  background: #ddd;
 }

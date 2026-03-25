@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { SkeletonUtils } from "three-stdlib";
 import { GameContext } from "../context/GameContext";
+import Particles3D from "../components/Particles3D";
 import NetworkingScreen from "./NetworkingScreen";
 
 /* =========================
@@ -923,7 +924,7 @@ export default function Task1() {
         alert("All network components collected!");
 
         completeTask(1);
-        setTimeout(()=>navigate("/missionnetworking"),500);
+        setTimeout(()=>navigate("/networking"),500);
 
       }
 
@@ -951,6 +952,8 @@ export default function Task1() {
 
     <div style={{width:"100vw",height:"100vh"}}>
 
+
+
       <Canvas camera={{position:[0,5,10],fov:60}} shadows>
 
         <color attach="background" args={["#05070d"]}/>
@@ -958,6 +961,8 @@ export default function Task1() {
 
         <ambientLight intensity={0.25}/>
         <directionalLight position={[5,15,5]} intensity={0.8} castShadow/>
+
+        <Particles3D />
 
         <Suspense fallback={null}>
 

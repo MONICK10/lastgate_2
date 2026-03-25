@@ -3121,7 +3121,7 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
 
             <button
               className="mission-button"
-              onClick={() => navigate("/mission/task2")}
+              onClick={() => navigate("/missionnetworking")}
             >
               🚀 Go Help Eleven
             </button>
