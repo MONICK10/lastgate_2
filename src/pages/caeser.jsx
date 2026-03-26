@@ -1,12 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
+import { calculateCaesarScore } from "../lib/scoringSystem";
 
 export default function Caesar() {
   const navigate = useNavigate();
+  const { user, updateScores, markModuleComplete } = useUser();
 
   // ✅ QUESTIONS
   const questions = [
-    { word: "KHOOR", shift: 3, answer: "HELLO" },
+    { word: "KHOOR", shift: 3, answer: "HELLO" }, 
     { word: "BTWQI", shift: 5, answer: "WORLD" },
     { word: "IUIK", shift: 6, answer: "CODE" },
     { word: "WSHULA", shift: 7, answer: "PLANET" },
@@ -21,6 +24,8 @@ export default function Caesar() {
   const [index, setIndex] = useState(0);
   const [input, setInput] = useState("");
   const [score, setScore] = useState(0);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [wrongCount, setWrongCount] = useState(0);
   const [time, setTime] = useState(0); // Start from 0
   const [finished, setFinished] = useState(false);
   const [feedback, setFeedback] = useState("");
@@ -65,9 +70,11 @@ export default function Caesar() {
 
     if (input.toUpperCase() === current.answer) {
       setScore(prev => prev + 3);
+      setCorrectCount(prev => prev + 1);
       setFeedback("✅ Correct!");
     } else {
       setScore(prev => prev - 1);
+      setWrongCount(prev => prev + 1);
       setFeedback(`❌ ${current.answer}`);
     }
 
@@ -79,6 +86,17 @@ export default function Caesar() {
     } else {
       setFinished(true);
       setTimeTaken(time);
+      
+      // Calculate Caesar score using actual correct/wrong counts
+      const correctAnswers = correctCount + (input.toUpperCase() === current.answer ? 1 : 0);
+      const wrongAnswers = wrongCount + (input.toUpperCase() !== current.answer ? 1 : 0);
+      const caesarScore = calculateCaesarScore(correctAnswers, wrongAnswers, time);
+      
+      // Update scores
+      markModuleComplete("caesar");
+      const totalScore = (user.task1Score || 0) + (user.task2Score || 0) + (user.networkingScore || 0) + (user.debugScore || 0) + caesarScore;
+      updateScores(user.networkingScore || 0, user.debugScore || 0, caesarScore, totalScore, user.task1Score || 0, user.task2Score || 0);
+      
       setTimeout(() => navigate("/debug"), 2000);
     }
   };

@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import * as THREE from "three";
 import { SkeletonUtils } from "three-stdlib";
 import { GameContext } from "../context/GameContext";
+import { useUser } from "../context/UserContext";
 import Particles3D from "../components/Particles3D";
 import NetworkingScreen from "./NetworkingScreen";
 
@@ -898,6 +899,7 @@ export default function Task1() {
   });
 
   const { completeTask } = useContext(GameContext);
+  const { addPhaseScore, updatePhase, markModuleComplete, user } = useUser();
   const navigate = useNavigate();
 
   const handleUpdatePosition = (pos) => {
@@ -913,6 +915,8 @@ export default function Task1() {
         [type]:Math.min(prev[type]+1,5)
       };
 
+      console.log("Item collected:", type, "Inventory:", updated);
+
       if(
         updated.pc===5 &&
         updated.server===5 &&
@@ -921,10 +925,22 @@ export default function Task1() {
         updated.router===5
       ){
 
+        console.log("ALL ITEMS COLLECTED! Navigating to /networking");
         alert("All network components collected!");
 
+        // Calculate Task1 score: 25 items collected × 50 points each = 1250 points
+        const task1Score = 25 * 50;
+        
         completeTask(1);
-        setTimeout(()=>navigate("/networking"),500);
+        markModuleComplete("task1");
+        updatePhase("task1");
+        addPhaseScore("task1", task1Score);
+        
+        setTimeout(()=>{
+          console.log("Navigating to /networking");
+          updatePhase("networking");
+          navigate("/networking");
+        },500);
 
       }
 
@@ -1017,6 +1033,11 @@ export default function Task1() {
         <div>Switch {inventory.switch}/5</div>
         <div>Router {inventory.router}/5</div>
       </div>
+
+      {/* Background Music */}
+      <audio autoPlay loop style={{ display: "none" }}>
+        <source src="/assets/run.mpeg" type="audio/mpeg" />
+      </audio>
 
     </div>
 

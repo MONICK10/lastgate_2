@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { UserProvider } from "./context/UserContext";
 import UserInfoOverlay from "./components/UserInfoOverlay";
+import CumulativeScoreDisplay from "./components/CumulativeScoreDisplay";
 
 import Home from "./pages/Home";
 import Intro from "./pages/Intro";
@@ -18,6 +19,7 @@ export default function App() {
     <UserProvider>
       <BrowserRouter>
         <UserInfoOverlay />
+        <CumulativeScoreDisplay />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/intro" element={<Intro />} />

@@ -5,6 +5,7 @@ import { Suspense, useRef, useEffect, useState, useCallback, useMemo } from "rea
 import * as THREE from "three";
 import { SkeletonUtils } from "three-stdlib";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
 
 /* =========================
 GARAGE
@@ -727,28 +728,28 @@ function CollectableLetters({ playerRef, onCollect, garageRef }) {
     // STATIC positions for all 26 letters (X, Y, Z)
     // Y = 2.0 = ground level, adjust if floating above buildings
     const staticLetterPositions = {
-      'A': [12, 2.0, -88],      // Moved near D
-      'B': [38, 2.0, -105],     // Moved near E
-      'C': [5, 2.0, -85],       // Moved near D
-      'D': [10, 2.0, -95],
-      'E': [30, 2.0, -100],
-      'F': [25, 2.0, -92],      // Moved near E
-      'G': [-80, 2.0, -110],
-      'H': [-75, 2.0, -100],    // Moved near G
-      'I': [8, 2.0, -118],      // Moved near K
-      'J': [28, 2.0, -120],     // Moved near L
-      'K': [0, 2.0, -110],
-      'L': [20, 2.0, -115],
+      'A': [-42, 2.0, -17.72],      // Moved near D
+      'B': [-57, 2.0, -0.61],     // Moved near E
+      'C': [-106, 2.0, -18],       // Moved near D
+      'D': [-107, 2.0, -64.28],
+      'E': [-69, 2.0, -68],
+      'F': [-103, 2.0, -102],      // Moved near E
+      'G': [-79, 2.0, -104],
+      'H': [-126, 2.0, -143],    // Moved near G
+      'I': [7, 2.0, -72],      // Moved near K
+      'J': [27, 2.0, -102],     // Moved near L
+      'K': [-66, 2.0, -110],
+      'L': [-43, 2.0, -167],
       'M': [-100, 2.0, -130],
-      'N': [-80, 2.0, -135],
-      'O': [-60, 2.0, -130],
-      'P': [-40, 2.0, -135],
-      'Q': [23, 2.0, -115],
-      'R': [0, 2.0, -135],
-      'S': [-120, 2.0, -70],
-      'T': [-100, 2.0, -65],
-      'U': [-80, 2.0, -70],
-      'V': [-60, 2.0, -65],
+      'N': [-150, 2.0, -166],
+      'O': [120, 2.0, -74],
+      'P': [140, 2.0, -97.05],
+      'Q': [-295, 2.0, -55],
+      'R': [-222, 2.0, -29],
+      'S': [-175, 2.0, -135],
+      'T': [-195, 2.0, -173],
+      'U': [-156, 2.0, -105],
+      'V': [-257.29, 2.0, -108.48],
       'W': [-40, 2.0, -70],
       'X': [-20, 2.0, -65],
       'Y': [0, 2.0, -70],
@@ -863,6 +864,7 @@ MAIN COMPONENT
 ========================= */
 export default function MissionNetworking() {
   const navigate = useNavigate();
+  const { user, updateScores, markModuleComplete } = useUser();
   const playerRef = useRef();
   const garageRef = useRef();
 
@@ -902,7 +904,21 @@ export default function MissionNetworking() {
 
       if (allCollected) {
         alert("All 26 letters collected! Mission complete!");
-        navigate("/caesar");
+        
+        // Calculate Task2 score: 26 letters collected × 50 points each = 1300 points
+        const task2Score = 26 * 50;
+        
+        // Mark module as complete
+        markModuleComplete("task2");
+        
+        // Update scores with the new task2 score
+        const totalScore = (user.task1Score || 0) + task2Score + (user.networkingScore || 0) + (user.caesarScore || 0) + (user.debugScore || 0);
+        updateScores(user.networkingScore || 0, user.debugScore || 0, user.caesarScore || 0, totalScore, user.task1Score || 0, task2Score);
+        
+        // Store in temporary state to pass to navigation
+        setTimeout(() => {
+          navigate("/caesar");
+        }, 1500);
       }
 
       return updated;
@@ -989,6 +1005,11 @@ export default function MissionNetworking() {
           </span>
         ))}
       </div>
+
+      {/* Background Music */}
+      <audio autoPlay loop style={{ display: "none" }}>
+        <source src="/assets/run.mpeg" type="audio/mpeg" />
+      </audio>
 
     </div>
 

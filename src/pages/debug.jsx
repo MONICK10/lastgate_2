@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useUser } from "../context/UserContext";
+import { calculateDebugScore } from "../lib/scoringSystem";
 
 export default function Debug() {
 
@@ -101,6 +104,9 @@ export default function Debug() {
   const [feedback, setFeedback] = useState("");
   const [dragIndex, setDragIndex] = useState(null);
 
+  const navigate = useNavigate();
+  const { user, addPhaseScore, updatePhase, markModuleComplete, completeGame } = useUser();
+
   /* =========================
      TIMER (COUNT UP)
   ========================= */
@@ -180,6 +186,27 @@ export default function Debug() {
      FINAL SCREEN
   ========================= */
   if (solvedCount === 5) {
+    // Calculate debug score and show completion modal
+    if (!submitted[4]) {
+      // Scores not submitted yet, calculate on first render
+      const correctBlocks = solvedCount;
+      const incorrectAttempts = submitted.filter(s => s).length - solvedCount;
+      const totalTime = timeTaken.reduce((a, b) => a + b, 0);
+      const isPerfect = solvedCount === 5;
+      
+      const debugScore = calculateDebugScore(correctBlocks, incorrectAttempts, totalTime, isPerfect);
+      
+      markModuleComplete("debug");
+      updatePhase("debug");
+      addPhaseScore("debug", debugScore);
+      
+      // Give a moment for state to update
+      setTimeout(() => {
+        completeGame(totalTime);
+        navigate("/complete");
+      }, 1500);
+    }
+
     return (
       <div style={{
         height: "100vh",
@@ -190,14 +217,26 @@ export default function Debug() {
         justifyContent: "center",
         alignItems: "center"
       }}>
-        <h1 style={{ fontSize: "50px" }}>🔥 PROBLEM SOLVED</h1>
-        <h2>Total Score: {scores.reduce((a,b)=>a+b,0)}</h2>
+        <h1 style={{ fontSize: "50px" }}>🎮 GAME COMPLETED 🎮</h1>
+        <h2 style={{ fontSize: "35px" }}>{user.name} has completed the game with</h2>
+        <h1 style={{ fontSize: "60px", color: "#ffdc00", textShadow: "0 0 20px #ffdc00" }}>{user.totalScore}</h1>
+        <h2 style={{ fontSize: "28px" }}>points</h2>
+        
+        <p style={{ fontSize: "20px", marginTop: "20px", color: "#00ff00" }}>✭ Excellent work! ✭</p>
 
         {timeTaken.map((t, i) => (
-          <p key={i}>
+          <p key={i} style={{ fontSize: "14px", marginTop: "5px" }}>
             Q{i+1}: {scores[i] === 10 ? "✅" : "❌"} | Time: {t}s
           </p>
         ))}
+        
+        <p style={{ fontSize: "18px", marginTop: "20px", color: "#00ffff" }}>
+          Total Time: {timeTaken.reduce((a, b) => a + b, 0)}s
+        </p>
+        
+        <p style={{ color: "#00ffffaa", marginTop: "20px" }}>
+          Redirecting to completion page...
+        </p>
       </div>
     );
   }

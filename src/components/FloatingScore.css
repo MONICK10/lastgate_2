@@ -1,0 +1,157 @@
+/* ============================================
+   FLOATING SCORE ANIMATIONS
+   ============================================ */
+
+.floating-scores-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.floating-score {
+  position: absolute;
+  font-weight: bold;
+  font-size: 28px;
+  font-family: 'Courier New', monospace;
+  animation: floatUp 1.5s ease-out forwards;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 80px;
+  height: 40px;
+}
+
+/* POSITIVE SCORE (Green) */
+.floating-score.positive {
+  color: #00ff00;
+  text-shadow:
+    0 0 10px rgba(0, 255, 0, 0.8),
+    0 0 20px rgba(0, 255, 0, 0.5);
+}
+
+.floating-score.positive .score-text {
+  animation: glow 1.5s ease-out forwards;
+}
+
+/* NEGATIVE SCORE (Red) */
+.floating-score.negative {
+  color: #ff3333;
+  text-shadow:
+    0 0 10px rgba(255, 51, 51, 0.8),
+    0 0 20px rgba(255, 51, 51, 0.5);
+  animation: floatUpShake 1.5s ease-out forwards;
+}
+
+/* ============================================
+   KEYFRAME ANIMATIONS
+   ============================================ */
+
+/* Float Up + Fade (Normal) */
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100px) scale(0.8);
+  }
+}
+
+/* Float Up + Shake + Fade (Wrong) */
+@keyframes floatUpShake {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  15% {
+    transform: translateY(-10px) translateX(5px) scale(1.1);
+  }
+  30% {
+    transform: translateY(-20px) translateX(-5px) scale(1.1);
+  }
+  45% {
+    transform: translateY(-35px) translateX(3px);
+  }
+  60% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100px) scale(0.8);
+  }
+}
+
+/* Glow Effect */
+@keyframes glow {
+  0% {
+    text-shadow:
+      0 0 10px rgba(0, 255, 0, 0.8),
+      0 0 20px rgba(0, 255, 0, 0.5);
+  }
+  50% {
+    text-shadow:
+      0 0 15px rgba(0, 255, 0, 1),
+      0 0 30px rgba(0, 255, 0, 0.8);
+  }
+  100% {
+    text-shadow:
+      0 0 5px rgba(0, 255, 0, 0.2),
+      0 0 10px rgba(0, 255, 0, 0);
+  }
+}
+
+/* ============================================
+   SCREEN SHAKE ANIMATION
+   ============================================ */
+
+.screen-shake-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 9998;
+  background: rgba(255, 0, 0, 0);
+}
+
+.screen-shake-overlay.active {
+  animation: screenShake 0.5s ease-in-out;
+}
+
+@keyframes screenShake {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-5px, -5px); }
+  20% { transform: translate(5px, 5px); }
+  30% { transform: translate(-5px, 5px); }
+  40% { transform: translate(5px, -5px); }
+  50% { transform: translate(-3px, -3px); }
+  60% { transform: translate(3px, 3px); }
+  70% { transform: translate(-2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  90% { transform: translate(-1px, -1px); }
+  100% { transform: translate(0, 0); }
+}
+
+.screen-shake-overlay.active::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 0, 0, 0.1);
+  animation: flashRed 0.5s ease-in-out;
+}
+
+@keyframes flashRed {
+  0% { opacity: 0.4; }
+  50% { opacity: 0.1; }
+  100% { opacity: 0; }
+}

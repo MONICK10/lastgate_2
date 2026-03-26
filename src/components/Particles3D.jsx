@@ -9,16 +9,16 @@ export default function Particles3D() {
   useEffect(() => {
     if (!particlesRef.current) return;
 
-    const COUNT = 400;
+    const COUNT = 1200; // Increased from 400 for denser particle field
     const particlesGeometry = new THREE.BufferGeometry();
     const positions = new Float32Array(COUNT * 3);
     const particlesData = [];
 
     // Initialize particles
     for (let i = 0; i < COUNT; i++) {
-      const x = (Math.random() - 0.5) * 500;
-      const y = Math.random() * 300 - 50;
-      const z = (Math.random() - 0.5) * 500;
+      const x = (Math.random() - 0.5) * 600;
+      const y = Math.random() * 350 - 50;
+      const z = (Math.random() - 0.5) * 600;
 
       positions[i * 3] = x;
       positions[i * 3 + 1] = y;
@@ -29,11 +29,11 @@ export default function Particles3D() {
         y,
         z,
         baseY: y,
-        speedY: Math.random() * 0.08 + 0.02, // Very slow falling
-        speedX: Math.random() * 0.15 - 0.075,
-        speedZ: Math.random() * 0.15 - 0.075,
-        size: Math.random() * 4 + 1.5,
-        opacity: Math.random() * 0.3 + 0.15,
+        speedY: Math.random() * 0.05 + 0.01, // Even slower falling for ethereal effect
+        speedX: Math.random() * 0.1 - 0.05,
+        speedZ: Math.random() * 0.1 - 0.05,
+        size: Math.random() * 6 + 2.5, // Larger particles
+        opacity: Math.random() * 0.4 + 0.25, // More visible
       });
     }
 
@@ -49,11 +49,11 @@ export default function Particles3D() {
     particlesGeometry.setAttribute("size", new THREE.BufferAttribute(sizes, 1));
 
     const particlesMaterial = new THREE.PointsMaterial({
-      color: 0xb0b0b0,
-      size: 2,
+      color: 0xd0d0d0, // Brighter color
+      size: 2.5,
       sizeAttenuation: true,
       transparent: true,
-      opacity: 0.35,
+      opacity: 0.5, // More visible
     });
 
     const particles = new THREE.Points(particlesGeometry, particlesMaterial);
@@ -86,8 +86,8 @@ export default function Particles3D() {
       // Reset only when particle goes VERY far down (accumulation effect)
       if (p.y < -200) {
         p.y = 250;
-        p.x = (Math.random() - 0.5) * 500;
-        p.z = (Math.random() - 0.5) * 500;
+        p.x = (Math.random() - 0.5) * 600;
+        p.z = (Math.random() - 0.5) * 600;
       }
 
       // Update position array

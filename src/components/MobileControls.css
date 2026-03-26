@@ -1,0 +1,240 @@
+/**
+ * Mobile Touch Controls - Responsive Layout
+ * Left: < > (horizontal) | Right: ^ on top, RUN below (vertical)
+ */
+
+/* ===== LEFT SIDE CONTROLS (< >) ===== */
+.mobile-controls-left {
+  position: fixed;
+  left: 10px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: row; /* Always horizontal */
+  gap: 8px;
+  z-index: 50;
+  pointer-events: auto;
+}
+
+/* ===== RIGHT SIDE CONTROLS (^ and RUN) ===== */
+.mobile-controls-right {
+  position: fixed;
+  right: 10px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column; /* Always vertical: ^ on top, RUN below */
+  gap: 8px;
+  z-index: 50;
+  pointer-events: auto;
+}
+
+/* ===== BASE BUTTON STYLING ===== */
+.control-btn {
+  width: 70px;
+  height: 70px;
+  min-width: 60px;
+  min-height: 60px;
+  border-radius: 10px;
+  border: 2px solid #00aaff;
+  background: rgba(0, 170, 255, 0.35);
+  color: #00aaff;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  transition: all 0.15s cubic-bezier(0.2, 0, 0.38, 0.9);
+  box-shadow: 0 0 15px rgba(0, 170, 255, 0.5), inset 0 0 10px rgba(0, 170, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  margin: 0;
+  backdrop-filter: blur(4px);
+}
+
+.control-btn:active {
+  background: rgba(0, 170, 255, 0.7);
+  box-shadow: 0 0 25px rgba(0, 170, 255, 0.9), inset 0 0 15px rgba(0, 170, 255, 0.4);
+  transform: scale(0.88);
+}
+
+.control-btn:hover {
+  background: rgba(0, 170, 255, 0.5);
+  box-shadow: 0 0 20px rgba(0, 170, 255, 0.7), inset 0 0 12px rgba(0, 170, 255, 0.3);
+}
+
+/* ===== LEFT/RIGHT ARROW BUTTONS ===== */
+.control-btn-left,
+.control-btn-right {
+  width: 70px;
+  height: 70px;
+  font-size: 32px;
+}
+
+/* ===== FORWARD ARROW BUTTON ===== */
+.control-btn-forward {
+  width: 70px;
+  height: 70px;
+  font-size: 32px;
+}
+
+/* ===== RUN/SHIFT BUTTON - CIRCULAR WITH TEXT ===== */
+.control-btn-shift {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%; /* Perfect circle */
+  background: rgba(255, 100, 0, 0.35);
+  border-color: #ff6400;
+  color: #ffaa44;
+  box-shadow: 0 0 15px rgba(255, 100, 0, 0.5), inset 0 0 10px rgba(255, 100, 0, 0.2);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.control-btn-shift:active {
+  background: rgba(255, 100, 0, 0.7);
+  box-shadow: 0 0 25px rgba(255, 100, 0, 0.9), inset 0 0 15px rgba(255, 100, 0, 0.4);
+}
+
+.control-btn-shift:hover {
+  background: rgba(255, 100, 0, 0.5);
+  box-shadow: 0 0 20px rgba(255, 100, 0, 0.7), inset 0 0 12px rgba(255, 100, 0, 0.3);
+}
+
+/* ===== RESPONSIVE: Small phones (max 480px) ===== */
+@media (max-width: 480px) {
+  .mobile-controls-left {
+    left: 8px;
+    bottom: 18px;
+    gap: 6px;
+  }
+
+  .mobile-controls-right {
+    right: 8px;
+    bottom: 18px;
+    gap: 6px;
+  }
+
+  .control-btn {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+    border-width: 2px;
+  }
+
+  .control-btn-shift {
+    width: 60px;
+    height: 60px;
+    font-size: 10px;
+  }
+
+  .control-btn-left,
+  .control-btn-right,
+  .control-btn-forward {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+}
+
+/* ===== RESPONSIVE: Small phones landscape (max 600px landscape) ===== */
+@media (max-height: 500px) and (orientation: landscape) {
+  .mobile-controls-left {
+    bottom: 8px;
+    gap: 4px;
+    left: 8px;
+  }
+
+  .mobile-controls-right {
+    bottom: 8px;
+    gap: 4px;
+    right: 8px;
+  }
+
+  .control-btn {
+    width: 55px;
+    height: 55px;
+    font-size: 22px;
+    border-width: 1.5px;
+  }
+
+  .control-btn-shift {
+    width: 55px;
+    height: 55px;
+    font-size: 9px;
+  }
+
+  .control-btn-left,
+  .control-btn-right,
+  .control-btn-forward {
+    width: 55px;
+    height: 55px;
+    font-size: 24px;
+  }
+}
+
+/* ===== RESPONSIVE: Medium phones (481px - 768px) ===== */
+@media (min-width: 481px) and (max-width: 768px) {
+  .mobile-controls-left {
+    left: 12px;
+    bottom: 25px;
+    gap: 10px;
+  }
+
+  .mobile-controls-right {
+    right: 12px;
+    bottom: 25px;
+    gap: 10px;
+  }
+
+  .control-btn {
+    width: 75px;
+    height: 75px;
+    font-size: 30px;
+  }
+
+  .control-btn-shift {
+    width: 75px;
+    height: 75px;
+    font-size: 12px;
+  }
+
+  .control-btn-left,
+  .control-btn-right,
+  .control-btn-forward {
+    width: 75px;
+    height: 75px;
+    font-size: 34px;
+  }
+}
+
+/* ===== HIDE ON LARGE SCREENS (tablets portrait and above) ===== */
+@media (min-width: 769px) {
+  .mobile-controls-left,
+  .mobile-controls-right {
+    display: none !important;
+  }
+}
+  user-select: none;
+}
+
+
+.control-btn {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Reduce opacity when not interacting */
+.control-btn.inactive {
+  opacity: 0.6;
+  background: rgba(0, 170, 255, 0.2);
+  box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+}

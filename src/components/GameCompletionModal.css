@@ -1,0 +1,208 @@
+/* ============================================
+   GAME COMPLETION MODAL STYLES
+   ============================================ */
+
+.game-completion-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeInOverlay 0.3s ease-in;
+}
+
+@keyframes fadeInOverlay {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.game-completion-modal {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 3px solid #00ff00;
+  border-radius: 12px;
+  max-width: 600px;
+  width: 90%;
+  padding: 40px;
+  text-align: center;
+  box-shadow:
+    0 0 20px rgba(0, 255, 0, 0.3),
+    0 0 40px rgba(0, 255, 0, 0.1),
+    inset 0 0 10px rgba(0, 255, 0, 0.05);
+  animation: slideInModal 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes slideInModal {
+  from {
+    transform: scale(0.8) translateY(50px);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}
+
+.completion-header {
+  margin-bottom: 30px;
+  border-bottom: 2px solid rgba(0, 255, 0, 0.3);
+  padding-bottom: 20px;
+}
+
+.completion-title {
+  margin: 0;
+  font-size: 32px;
+  color: #00ff00;
+  text-shadow:
+    0 0 10px rgba(0, 255, 0, 0.6),
+    0 0 20px rgba(0, 255, 0, 0.3);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 2px;
+}
+
+.completion-content {
+  margin: 30px 0;
+}
+
+.user-completion-info {
+  margin-bottom: 25px;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.completion-text {
+  color: #ffffff;
+  display: block;
+  font-family: 'Courier New', monospace;
+}
+
+.user-name {
+  color: #ffdc00;
+  font-weight: bold;
+  font-size: 20px;
+  text-shadow: 0 0 10px rgba(255, 220, 0, 0.5);
+}
+
+.has-completed {
+  color: #a0a0a0;
+  margin-left: 10px;
+}
+
+.score-display {
+  background: rgba(0, 255, 0, 0.1);
+  border: 2px solid rgba(0, 255, 0, 0.3);
+  border-radius: 8px;
+  padding: 30px;
+  margin: 30px 0;
+}
+
+.score-number {
+  font-size: 64px;
+  color: #00ff00;
+  font-weight: bold;
+  font-family: 'Courier New', monospace;
+  text-shadow:
+    0 0 15px rgba(0, 255, 0, 0.6),
+    0 0 30px rgba(0, 255, 0, 0.3);
+  animation: scoreGlow 2s ease-in-out infinite;
+}
+
+@keyframes scoreGlow {
+  0%, 100% {
+    text-shadow:
+      0 0 15px rgba(0, 255, 0, 0.6),
+      0 0 30px rgba(0, 255, 0, 0.3);
+  }
+  50% {
+    text-shadow:
+      0 0 20px rgba(0, 255, 0, 0.8),
+      0 0 40px rgba(0, 255, 0, 0.5);
+  }
+}
+
+.score-label {
+  display: block;
+  font-size: 18px;
+  color: #a0a0a0;
+  margin-top: 10px;
+  letter-spacing: 1px;
+}
+
+.completion-message {
+  font-family: 'Courier New', monospace;
+  color: #ffffff;
+  margin: 25px 0;
+}
+
+.completion-message p {
+  margin: 8px 0;
+  font-size: 16px;
+}
+
+.completion-message p:first-child {
+  color: #ffdc00;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.completion-footer {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  margin-top: 30px;
+  border-top: 2px solid rgba(0, 255, 0, 0.3);
+  padding-top: 20px;
+}
+
+.btn-restart,
+.btn-close {
+  padding: 12px 24px;
+  font-size: 16px;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+  border: 2px solid #00ff00;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+}
+
+.btn-restart {
+  background: rgba(0, 255, 0, 0.1);
+  color: #00ff00;
+}
+
+.btn-restart:hover {
+  background: rgba(0, 255, 0, 0.2);
+  box-shadow:
+    0 0 10px rgba(0, 255, 0, 0.5),
+    0 0 20px rgba(0, 255, 0, 0.2);
+  text-shadow: 0 0 15px rgba(0, 255, 0, 0.6);
+}
+
+.btn-close {
+  background: rgba(255, 51, 51, 0.1);
+  color: #ff3333;
+  border-color: #ff3333;
+  text-shadow: 0 0 10px rgba(255, 51, 51, 0.3);
+}
+
+.btn-close:hover {
+  background: rgba(255, 51, 51, 0.2);
+  box-shadow:
+    0 0 10px rgba(255, 51, 51, 0.5),
+    0 0 20px rgba(255, 51, 51, 0.2);
+  text-shadow: 0 0 15px rgba(255, 51, 51, 0.6);
+}
+
+button:active {
+  transform: scale(0.98);
+}

@@ -12,6 +12,10 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import "./NetworkingScreen.css";
+import { useUser } from "../context/UserContext";
+import { FloatingScore, ScreenShake } from "../components/FloatingScore";
+import { GameCompletionModal } from "../components/GameCompletionModal";
+import { calculateNetworkingScore } from "../lib/scoringSystem";
 
  // ============================================
 // GLOBAL NODE → PROBLEM MAP
@@ -1715,6 +1719,16 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
   const [nodes, setNodes] = useNodesState([]);
   const [edges, setEdges] = useEdgesState([]);
 
+  // ============================================
+  // SCORING STATE
+  // ============================================
+  const { user, updateScores, completeGame, markModuleComplete } = useUser();
+  const [floatingScores, setFloatingScores] = useState([]);
+  const [screenShakeKey, setScreenShakeKey] = useState(0);
+  const [wrongAttempts, setWrongAttempts] = useState(0);
+  const [gameCompletionVisible, setGameCompletionVisible] = useState(false);
+  const [startTime] = useState(Date.now());
+
   // Create mapping of problems to affected devices
   const createProblemMapping = () => ({
     1: ["ho-core-switch", "ho-access-switch-1", "ho-access-switch-2", "ho-access-switch-3"],
@@ -1771,6 +1785,36 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
   };
 
   const getDeviceDisplayName = getDeviceLabel;
+
+  // ============================================
+  // SCORING FUNCTIONS
+  // ============================================
+  const addFloatingScore = (points, clientX = window.innerWidth / 2, clientY = window.innerHeight / 2) => {
+    const newScore = {
+      id: Math.random(),
+      points,
+      x: clientX,
+      y: clientY,
+      type: points > 0 ? 'positive' : 'negative',
+    };
+    
+    setFloatingScores((prev) => [...prev, newScore]);
+
+    // Trigger screen shake for negative scores
+    if (points < 0) {
+      setScreenShakeKey((prev) => prev + 1);
+    }
+  };
+
+  const removeFloatingScore = (scoreId) => {
+    setFloatingScores((prev) => prev.filter((s) => s.id !== scoreId));
+  };
+
+  const updateNetworkingScore = () => {
+    const completionTime = (Date.now() - startTime) / 1000;
+    const networkingScore = calculateNetworkingScore(solvedProblems.size, wrongAttempts, completionTime);
+    updateScores(networkingScore, user.debugScore, user.caesarScore, networkingScore + user.debugScore + user.caesarScore);
+  };
 
   const problems = [
     {
@@ -2093,6 +2137,9 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
       setValidationErrors({});
       setConfigMessage({ type: "success", text: `✅ ${getDeviceDisplayName(device)} Configured! (${getProblemProgress(1)} devices)` });
       
+      // Add floating score for correct action
+      addFloatingScore(50);
+      
       addConfiguredDevice(1, device);
       
       const affectedDevices = problemMapping[1];
@@ -2107,6 +2154,14 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
         addStoryPopup(`✅ ${getDeviceDisplayName(device)} configured!`, "left", "info");
       }
       
+      // Update score in real-time
+      setTimeout(() => {
+        const completionTime = (Date.now() - startTime) / 1000;
+        const networkingScore = calculateNetworkingScore(solvedProblems.size + 1, wrongAttempts, completionTime);
+        const totalScore = networkingScore + user.debugScore + user.caesarScore;
+        updateScores(networkingScore, user.debugScore, user.caesarScore, totalScore);
+      }, 100);
+      
       setTimeout(() => {
         setActiveConfig(null);
         setConfigMessage(null);
@@ -2114,6 +2169,18 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
     } else {
       setValidationErrors(errors);
       setConfigMessage({ type: "error", text: "❌ Configuration has errors. See details below." });
+      
+      // Add floating score for wrong action
+      addFloatingScore(-10);
+      setWrongAttempts((prev) => prev + 1);
+      
+      // Update score with wrong attempt
+      setTimeout(() => {
+        const completionTime = (Date.now() - startTime) / 1000;
+        const networkingScore = calculateNetworkingScore(solvedProblems.size, wrongAttempts + 1, completionTime);
+        const totalScore = networkingScore + user.debugScore + user.caesarScore;
+        updateScores(networkingScore, user.debugScore, user.caesarScore, totalScore);
+      }, 100);
     }
   };
 
@@ -3049,6 +3116,16 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
     setEdges(initialEdges);
   }, [setNodes, setEdges, highlightedProblems]);
 
+  // Update score in real-time whenever problems or attempts change
+  useEffect(() => {
+    if (user && startTime) {
+      const completionTime = (Date.now() - startTime) / 1000;
+      const networkingScore = calculateNetworkingScore(solvedProblems.size, wrongAttempts, completionTime);
+      const totalScore = networkingScore + (user.debugScore || 0) + (user.caesarScore || 0);
+      updateScores(networkingScore, user.debugScore || 0, user.caesarScore || 0, totalScore);
+    }
+  }, [solvedProblems.size, wrongAttempts]);
+
   // Compute allSolved early so useEffect can use it
   const allSolved = solvedProblems.size === problems.length;
 
@@ -3060,6 +3137,24 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
         addStoryPopup("Eleven: I'm back… I found you…", "right", "info");
       }, 500);
       setSignalStrength(100);
+      
+      // Calculate and update networking score
+      const completionTime = (Date.now() - startTime) / 1000;
+      const networkingScore = calculateNetworkingScore(solvedProblems.size, wrongAttempts, completionTime);
+      const totalScore = networkingScore + user.debugScore + user.caesarScore + user.task1Score + user.task2Score;
+      
+      updateScores(networkingScore, user.debugScore, user.caesarScore, totalScore, user.task1Score, user.task2Score);
+      
+      // Mark networking as complete
+      markModuleComplete("networking");
+      
+      // Only show completion modal if all modules are done
+      if (user.modulesCompleted.task1 && user.modulesCompleted.task2 && user.modulesCompleted.caesar && user.modulesCompleted.debug) {
+        setTimeout(() => {
+          setGameCompletionVisible(true);
+          completeGame(totalScore);
+        }, 2500);
+      }
     }
   }, [allSolved, solvedProblems.size]);
 
@@ -3337,6 +3432,28 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
 
       {/* STORY POPUP CONTAINER - STRANGER THINGS THEME */}
       <StoryPopupContainer popups={storyPopups} />
+      
+      {/* FLOATING SCORE FEEDBACK */}
+      <FloatingScore 
+        floatingScores={floatingScores} 
+        onAnimationComplete={removeFloatingScore}
+      />
+      
+      {/* SCREEN SHAKE FEEDBACK */}
+      <ScreenShake triggerShake={screenShakeKey > 0} />
+      
+      {/* GAME COMPLETION MODAL */}
+      <GameCompletionModal
+        isVisible={gameCompletionVisible}
+        userName={user.name}
+        totalScore={user.totalScore}
+        onClose={() => {
+          close();
+        }}
+        onRestart={() => {
+          window.location.reload();
+        }}
+      />
       
       {/* CAMERA VIGNETTE - CINEMATIC EFFECT */}
       <div className="camera-vignette" />
