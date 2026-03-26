@@ -905,14 +905,15 @@ export default function MissionNetworking() {
         alert("All 26 letters collected! Mission complete!");
         
         // Calculate Task2 score: 26 letters collected × 50 points each = 1300 points
-        const task2Score = 26 * 50;
+        const missionNetworkingScore = 26 * 50;
         
         // Mark module as complete
         markModuleComplete("task2");
         
-        // Update scores with the new task2 score
-        const totalScore = (user.task1Score || 0) + task2Score + (user.networkingScore || 0) + (user.caesarScore || 0) + (user.debugScore || 0);
-        updateScores(user.networkingScore || 0, user.debugScore || 0, user.caesarScore || 0, totalScore, user.task1Score || 0, task2Score);
+        // Update scores with the new missionNetworking score
+        // NOTE: Caesar and Debug haven't been completed yet, so don't include them
+        const totalScore = (user.task1Score || 0) + (user.networkingScore || 0) + missionNetworkingScore;
+        updateScores(user.networkingScore || 0, 0, 0, totalScore, user.task1Score || 0, missionNetworkingScore);
         
         // Store in temporary state to pass to navigation
         setTimeout(() => {

@@ -2158,8 +2158,8 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
       setTimeout(() => {
         const completionTime = (Date.now() - startTime) / 1000;
         const networkingScore = calculateNetworkingScore(solvedProblems.size + 1, wrongAttempts, completionTime);
-        const totalScore = networkingScore + user.debugScore + user.caesarScore;
-        updateScores(networkingScore, user.debugScore, user.caesarScore, totalScore);
+        const totalScore = (user.task1Score || 0) + networkingScore;
+        updateScores(networkingScore, 0, 0, totalScore, user.task1Score || 0, 0);
       }, 100);
       
       setTimeout(() => {
@@ -2178,8 +2178,8 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
       setTimeout(() => {
         const completionTime = (Date.now() - startTime) / 1000;
         const networkingScore = calculateNetworkingScore(solvedProblems.size, wrongAttempts + 1, completionTime);
-        const totalScore = networkingScore + user.debugScore + user.caesarScore;
-        updateScores(networkingScore, user.debugScore, user.caesarScore, totalScore);
+        const totalScore = (user.task1Score || 0) + networkingScore;
+        updateScores(networkingScore, 0, 0, totalScore, user.task1Score || 0, 0);
       }, 100);
     }
   };
@@ -3121,8 +3121,8 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
     if (user && startTime) {
       const completionTime = (Date.now() - startTime) / 1000;
       const networkingScore = calculateNetworkingScore(solvedProblems.size, wrongAttempts, completionTime);
-      const totalScore = networkingScore + (user.debugScore || 0) + (user.caesarScore || 0);
-      updateScores(networkingScore, user.debugScore || 0, user.caesarScore || 0, totalScore);
+      const totalScore = (user.task1Score || 0) + networkingScore;
+      updateScores(networkingScore, 0, 0, totalScore, user.task1Score || 0, 0);
     }
   }, [solvedProblems.size, wrongAttempts]);
 
@@ -3141,9 +3141,9 @@ function NetworkingScreenInner({ close, onTaskComplete }) {
       // Calculate and update networking score
       const completionTime = (Date.now() - startTime) / 1000;
       const networkingScore = calculateNetworkingScore(solvedProblems.size, wrongAttempts, completionTime);
-      const totalScore = networkingScore + user.debugScore + user.caesarScore + user.task1Score + user.task2Score;
+      const totalScore = (user.task1Score || 0) + networkingScore;
       
-      updateScores(networkingScore, user.debugScore, user.caesarScore, totalScore, user.task1Score, user.task2Score);
+      updateScores(networkingScore, 0, 0, totalScore, user.task1Score || 0, 0);
       
       // Mark networking as complete
       markModuleComplete("networking");

@@ -92,10 +92,12 @@ export default function Caesar() {
       const wrongAnswers = wrongCount + (input.toUpperCase() !== current.answer ? 1 : 0);
       const caesarScore = calculateCaesarScore(correctAnswers, wrongAnswers, time);
       
-      // Update scores
+      // Calculate total score (all phases combined)
+      const totalScore = (user.task1Score || 0) + (user.networkingScore || 0) + (user.missionNetworkingScore || 0) + caesarScore;
+      
+      // Update scores in context
       markModuleComplete("caesar");
-      const totalScore = (user.task1Score || 0) + (user.task2Score || 0) + (user.networkingScore || 0) + (user.debugScore || 0) + caesarScore;
-      updateScores(user.networkingScore || 0, user.debugScore || 0, caesarScore, totalScore, user.task1Score || 0, user.task2Score || 0);
+      updateScores(user.networkingScore || 0, user.debugScore || 0, caesarScore, totalScore, user.task1Score || 0, user.missionNetworkingScore || 0);
       
       setTimeout(() => navigate("/debug"), 2000);
     }
