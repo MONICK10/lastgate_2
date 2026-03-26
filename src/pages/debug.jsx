@@ -196,13 +196,21 @@ export default function Debug() {
       
       const debugScore = calculateDebugScore(correctBlocks, incorrectAttempts, totalTime, isPerfect);
       
+      // Mark complete and update score properly
       markModuleComplete("debug");
       updatePhase("debug");
       addPhaseScore("debug", debugScore);
       
-      // Give a moment for state to update
+      // Calculate total now to pass to completeGame
+      const finalTotal = (user.task1Score || 0) + 
+                         (user.networkingScore || 0) + 
+                         (user.missionNetworkingScore || 0) + 
+                         (user.caesarScore || 0) + 
+                         debugScore;
+      
+      // Complete game with calculated total
       setTimeout(() => {
-        completeGame(totalTime);
+        completeGame(totalTime, finalTotal);
         navigate("/complete");
       }, 1500);
     }

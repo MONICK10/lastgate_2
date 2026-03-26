@@ -140,14 +140,15 @@ export function UserProvider({ children }) {
   };
 
   /**
-   * Complete the entire game with final time
+   * Complete the entire game with final time and score
    */
-  const completeGame = (totalTime = 0) => {
+  const completeGame = (totalTime = 0, finalScore = 0) => {
     setUser((prev) => ({
       ...prev,
       totalTime,
+      totalScore: finalScore || prev.totalScore,
       gameCompleted: true,
-      currentPhase: "debug", // Mark as in debug phase
+      currentPhase: "debug",
     }));
   };
 

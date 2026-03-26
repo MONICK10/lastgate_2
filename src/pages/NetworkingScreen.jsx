@@ -739,7 +739,7 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
   // ========================================
   if (mode === "dns") {
     const isConfigValid = 
-      dnsConfig.zone === "technova.local" &&
+      dnsConfig.zone === "hawkins.local" &&
       dnsConfig.records.webserver === "10.0.0.50" &&
       dnsConfig.records.db === "10.0.1.50" &&
       dnsConfig.serviceReloaded;
@@ -775,11 +775,11 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
                 type="text"
                 value={dnsConfig.zone}
                 onChange={(e) => setDnsConfig({ ...dnsConfig, zone: e.target.value })}
-                placeholder="technova.local"
+                placeholder="hawkins.local"
                 className="config-input"
               />
-              {dnsConfig.zone && dnsConfig.zone !== "technova.local" && (
-                <p className="error-message">❌ Zone must be: technova.local</p>
+              {dnsConfig.zone && dnsConfig.zone !== "hawkins.local" && (
+                <p className="error-message">❌ Zone must be: hawkins.local</p>
               )}
             </div>
           </div>
@@ -842,7 +842,7 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
             <button
               className={`btn-service ${dnsConfig.serviceReloaded ? "success" : ""}`}
               onClick={() => {
-                if (dnsConfig.zone === "technova.local" && 
+                if (dnsConfig.zone === "hawkins.local" && 
                     dnsConfig.records.webserver === "10.0.0.50" && 
                     dnsConfig.records.db === "10.0.1.50") {
                   setDnsConfig({ ...dnsConfig, serviceReloaded: true });
@@ -866,7 +866,7 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
                   type="text"
                   value={dnsConfig.testDomain}
                   onChange={(e) => setDnsConfig({ ...dnsConfig, testDomain: e.target.value })}
-                  placeholder="webserver.technova.local"
+                  placeholder="webserver.hawkins.local"
                   className="config-input"
                 />
               </div>
@@ -874,7 +874,7 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
               <button
                 className="btn-test"
                 onClick={() => {
-                  if (dnsConfig.testDomain === "webserver.technova.local") {
+                  if (dnsConfig.testDomain === "webserver.hawkins.local") {
                     setDnsConfig({ ...dnsConfig, nslookupResult: "success" });
                     setSolvedProblems(new Set([...solvedProblems, 6]));
                     setSignalStrength(prev => Math.min(100, prev + 9));
@@ -894,7 +894,7 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
                   {dnsConfig.nslookupResult === "success" ? (
                     <>
                       <div className="output-line">Server: 10.0.0.1</div>
-                      <div className="output-line">Name: webserver.technova.local</div>
+                      <div className="output-line">Name: webserver.hawkins.local</div>
                       <div className="output-line">Address: 10.0.0.50</div>
                       <div className="output-line" style={{marginTop: '10px', fontWeight: 'bold', color: '#4caf50'}}>
                         ✅ DNS Configured Successfully!

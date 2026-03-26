@@ -10,14 +10,14 @@ export const SCORING_CONFIG = {
     MAX_TIME_MINS: 20,
   },
   DEBUG: {
-    CORRECT_BLOCK: 40,
+    CORRECT_BLOCK: 50,
     INCORRECT_ATTEMPT: -10,
-    PERFECT_SOLUTION_BONUS: 75,
+    PERFECT_SOLUTION_BONUS: 0,
     MAX_TIME_SECS: 600,
   },
   CAESAR: {
-    CORRECT_ANSWER: 35,
-    WRONG_ANSWER: -8,
+    CORRECT_ANSWER: 50,
+    WRONG_ANSWER: -10,
     MAX_TIME_SECS: 300,
   },
 };
@@ -41,14 +41,9 @@ export const calculateDebugScore = (correctBlocks, incorrectAttempts, completion
   const baseScore = correctBlocks * SCORING_CONFIG.DEBUG.CORRECT_BLOCK;
   const penalty = incorrectAttempts * SCORING_CONFIG.DEBUG.INCORRECT_ATTEMPT;
   
-  const timeBonus = Math.max(
-    0,
-    ((SCORING_CONFIG.DEBUG.MAX_TIME_SECS - completionTime) / SCORING_CONFIG.DEBUG.MAX_TIME_SECS) * 150
-  );
-  
   const perfectBonus = isPerfect ? SCORING_CONFIG.DEBUG.PERFECT_SOLUTION_BONUS : 0;
   
-  return Math.max(0, baseScore + penalty + timeBonus + perfectBonus);
+  return Math.max(0, baseScore + penalty + perfectBonus);
 };
 
 // ============================================
