@@ -27,26 +27,30 @@ export function UserProvider({ children }) {
   });
 
   // Load from localStorage on mount - ensures data persists through page reloads during gameplay
+  // BUT: Only restore if we're on a game page (not Home/Intro)
   useEffect(() => {
-    const savedUser = localStorage.getItem("userDetails");
-    // Only load if data exists and is not null AND user has started the game
-    if (savedUser && savedUser !== "null") {
-      try {
-        const parsedUser = JSON.parse(savedUser);
-        // Only load if user has a name (meaning they entered the form)
-        // This prevents stale data from previous sessions showing up on fresh app start
-        if (parsedUser.name && parsedUser.name.trim() !== "") {
-          setUser(parsedUser);
-        } else {
-          // If no name, clear the stale data
+    const currentPath = window.location.pathname;
+    // List of pages where we should NOT restore from localStorage
+    const noRestorePages = ["/", "/intro", "/complete"];
+    const shouldRestore = !noRestorePages.includes(currentPath);
+
+    if (shouldRestore) {
+      const savedUser = localStorage.getItem("userDetails");
+      // Only load if data exists and user has started the game
+      if (savedUser && savedUser !== "null") {
+        try {
+          const parsedUser = JSON.parse(savedUser);
+          // Only load if user has a name (meaning they entered the form)
+          if (parsedUser.name && parsedUser.name.trim() !== "") {
+            setUser(parsedUser);
+          }
+        } catch (error) {
+          console.error("Failed to parse saved user details:", error);
           localStorage.removeItem("userDetails");
         }
-      } catch (error) {
-        console.error("Failed to parse saved user details:", error);
-        localStorage.removeItem("userDetails");
       }
     } else {
-      // Ensure fresh start - clear any remnants
+      // Clear stale data on Home/Intro/Complete pages
       localStorage.removeItem("userDetails");
     }
   }, []);

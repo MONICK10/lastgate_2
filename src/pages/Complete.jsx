@@ -1,22 +1,23 @@
 import { useUser } from "../context/UserContext";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function Complete() {
   const { user, clearUser } = useUser();
-  const [isClearing, setIsClearing] = useState(false);
+  const navigate = useNavigate();
   
-  // Capture score immediately, then clear data after delay
+  // Only clear localStorage on initial load to prevent stale data on next session
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsClearing(true);
-      clearUser();
-      // Force localStorage clear to ensure it's gone
-      localStorage.removeItem("userDetails");
-      sessionStorage.clear(); // Also clear any session data
-    }, 5000); // Show score for 5 seconds, then reset
-    
-    return () => clearTimeout(timer);
-  }, [clearUser]);
+    // Clear localStorage to ensure fresh start for next player on page reload
+    localStorage.removeItem("userDetails");
+    sessionStorage.clear();
+  }, []);
+
+  const handlePlayAgain = () => {
+    clearUser();
+    localStorage.removeItem("userDetails");
+    navigate("/");
+  };
   
   return (
     <div style={{ 
@@ -41,45 +42,71 @@ export default function Complete() {
         border: "3px solid #00ffff",
         borderRadius: "10px",
         background: "rgba(0, 255, 255, 0.1)",
-        maxWidth: "400px"
+        maxWidth: "500px"
       }}>
         <h2 style={{ color: "#00ff00", fontSize: "2em", marginBottom: "20px" }}>✨ Final Results ✨</h2>
         
-        {isClearing ? (
-          <div style={{ fontSize: "1.3em", color: "#ffff00", animation: "blink 0.5s infinite" }}>
-            <p>🔄 Resetting for next player...</p>
-            <p>Data cleared ✓</p>
-          </div>
-        ) : (
-          <div style={{ fontSize: "1.3em", marginBottom: "15px", color: "#ffffff" }}>
-            <p><strong>{user?.name || "Player"}</strong> has completed the game with <strong>{user?.totalScore || 0}</strong> points in <strong>{user?.totalTime || 0}</strong> seconds</p>
-          </div>
-        )}
+        <div style={{ fontSize: "1.3em", marginBottom: "15px", color: "#ffffff" }}>
+          <p><strong>{user?.name || "Player"}</strong> has completed the game!</p>
+          <p style={{ fontSize: "2.5em", color: "#ffdc00", marginTop: "15px", textShadow: "0 0 20px #ffdc00" }}>
+            {user?.totalScore || 0}
+          </p>
+          <p style={{ fontSize: "1em", color: "#aabbff" }}>Total Score</p>
+        </div>
         
-        {!isClearing && (
-          <div style={{ 
-            fontSize: "0.9em", 
-            color: "#aabbff", 
-            marginTop: "30px", 
-            borderTop: "2px solid #00ffff",
-            paddingTop: "20px"
-          }}>
-            <p>Register: {user?.registerNumber || "N/A"}</p>
-            <p>Networking: {user?.networkingScore || 0} pts</p>
+        <div style={{ 
+          fontSize: "0.95em", 
+          color: "#aabbff", 
+          marginTop: "30px", 
+          borderTop: "2px solid #00ffff",
+          paddingTop: "20px"
+        }}>
+          <p><strong>Player Details:</strong></p>
+          <p>Name: {user?.name || "N/A"}</p>
+          <p>Register: {user?.registerNumber || "N/A"}</p>
+          <p>Time: {user?.totalTime || 0}s</p>
+          
+          <div style={{ marginTop: "20px", borderTop: "1px solid #00ffff77", paddingTop: "15px" }}>
+            <p><strong>Score Breakdown:</strong></p>
             <p>Task 1: {user?.task1Score || 0} pts</p>
-            <p>Task 2: {user?.task2Score || 0} pts</p>
+            <p>Networking: {user?.networkingScore || 0} pts</p>
+            <p>Mission Networking: {user?.missionNetworkingScore || 0} pts</p>
             <p>Caesar: {user?.caesarScore || 0} pts</p>
             <p>Debug: {user?.debugScore || 0} pts</p>
           </div>
-        )}
+        </div>
+
+        <button 
+          onClick={handlePlayAgain}
+          style={{
+            marginTop: "30px",
+            padding: "12px 30px",
+            fontSize: "1em",
+            backgroundColor: "#00ff00",
+            color: "#000",
+            border: "none",
+            borderRadius: "5px",
+            cursor: "pointer",
+            fontWeight: "bold",
+            boxShadow: "0 0 15px #00ff00",
+            transition: "all 0.3s ease"
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.boxShadow = "0 0 30px #00ff00";
+            e.target.style.transform = "scale(1.05)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.boxShadow = "0 0 15px #00ff00";
+            e.target.style.transform = "scale(1)";
+          }}
+        >
+          🔄 Play Again
+        </button>
       </div>
 
-      <style>{`
-        @keyframes blink {
-          0%, 50% { opacity: 1; }
-          51%, 100% { opacity: 0.5; }
-        }
-      `}</style>
+      <p style={{ marginTop: "40px", fontSize: "0.9em", color: "#00ffff77" }}>
+        Refresh page or click "Play Again" to reset for next player
+      </p>
     </div>
   );
 }

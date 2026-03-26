@@ -178,17 +178,29 @@ export default function Debug() {
     setTimeTaken(newTimes);
 
     setFeedback(isCorrect ? "🎉 Correct! +10" : "❌ Wrong! 0 Marks");
+
+    // Auto-advance to next question if not the last one
+    if (currentQ < 4) {
+      setTimeout(() => {
+        loadQuestion(currentQ + 1);
+      }, 500); // Small delay to show feedback
+    }
   };
 
+  const [completionTriggered, setCompletionTriggered] = useState(false);
+  const [showCompletion, setShowCompletion] = useState(false);
+  const [completionData, setCompletionData] = useState(null);
+
   const solvedCount = scores.filter(s => s === 10).length;
+  const allSubmitted = submitted.every(s => s);
 
   /* =========================
-     FINAL SCREEN
+     HANDLE COMPLETION
   ========================= */
-  if (solvedCount === 5) {
-    // Calculate debug score and show completion modal
-    if (!submitted[4]) {
-      // Scores not submitted yet, calculate on first render
+  useEffect(() => {
+    if (allSubmitted && !completionTriggered) {
+      setCompletionTriggered(true);
+      
       const correctBlocks = solvedCount;
       const incorrectAttempts = submitted.filter(s => s).length - solvedCount;
       const totalTime = timeTaken.reduce((a, b) => a + b, 0);
@@ -208,13 +220,25 @@ export default function Debug() {
                          (user.caesarScore || 0) + 
                          debugScore;
       
-      // Complete game with calculated total
+      setCompletionData({ finalTotal, totalTime, debugScore });
+      
+      // Show completion screen after 1s, then navigate
       setTimeout(() => {
-        completeGame(totalTime, finalTotal);
-        navigate("/complete");
-      }, 1500);
+        setShowCompletion(true);
+        setTimeout(() => {
+          completeGame(totalTime, finalTotal);
+          navigate("/complete");
+        }, 1500);
+      }, 300);
     }
+  }, [allSubmitted, completionTriggered, solvedCount, submitted, timeTaken, user, markModuleComplete, updatePhase, addPhaseScore, completeGame, navigate]);
 
+  /* =========================
+     UI
+  ========================= */
+  
+  // Show completion screen if all submitted and triggered
+  if (showCompletion && completionData) {
     return (
       <div style={{
         height: "100vh",
@@ -226,8 +250,8 @@ export default function Debug() {
         alignItems: "center"
       }}>
         <h1 style={{ fontSize: "50px" }}>🎮 GAME COMPLETED 🎮</h1>
-        <h2 style={{ fontSize: "35px" }}>{user.name} has completed the game with</h2>
-        <h1 style={{ fontSize: "60px", color: "#ffdc00", textShadow: "0 0 20px #ffdc00" }}>{user.totalScore}</h1>
+        <h2 style={{ fontSize: "35px" }}>{user.name || "Player"} has completed the game with</h2>
+        <h1 style={{ fontSize: "60px", color: "#ffdc00", textShadow: "0 0 20px #ffdc00" }}>{completionData.finalTotal}</h1>
         <h2 style={{ fontSize: "28px" }}>points</h2>
         
         <p style={{ fontSize: "20px", marginTop: "20px", color: "#00ff00" }}>✭ Excellent work! ✭</p>
@@ -239,7 +263,7 @@ export default function Debug() {
         ))}
         
         <p style={{ fontSize: "18px", marginTop: "20px", color: "#00ffff" }}>
-          Total Time: {timeTaken.reduce((a, b) => a + b, 0)}s
+          Total Time: {completionData.totalTime}s
         </p>
         
         <p style={{ color: "#00ffffaa", marginTop: "20px" }}>
@@ -249,9 +273,7 @@ export default function Debug() {
     );
   }
 
-  /* =========================
-     UI
-  ========================= */
+  // Main game UI
   return (
     <div style={{
       display: "flex",
