@@ -44,21 +44,49 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // Runtime caching strategies for dynamic assets
+        // ============================================
+        // CRITICAL: SPA NAVIGATION FALLBACK
+        // ============================================
+        // Serve index.html for all navigation requests (/*.*, not API routes)
+        navigateFallback: '/index.html',
+        navigateFallbackDenylist: [
+          // Exclude API routes - do NOT serve index.html for these
+          /^\/api\//,      // /api/* routes
+          /^\/mission\/api\//,  // /mission/api/* if you have an API there
+          /\.[a-z]+$/i,    // Any file extension (.js, .json, .png, etc)
+        ],
+
+        // ============================================
+        // RUNTIME CACHING STRATEGIES
+        // ============================================
         runtimeCaching: [
-          // 3D models: CacheFirst - serve from cache, fall back to network
+          // 3D models: CacheFirst - but ONLY for .glb that don't have embedded textures
+          // For models with textures, use NetworkFirst to avoid blob URL issues
           {
-            urlPattern: /\.(?:glb|gltf)$/i,
-            handler: 'CacheFirst',
+            urlPattern: /\.glb$/i,
+            handler: 'NetworkFirst',  // Changed from CacheFirst to avoid blob URL stale state
             options: {
               cacheName: '3d-models',
+              networkTimeoutSeconds: 10,
               expiration: {
                 maxEntries: 20,
                 maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
               },
             },
           },
-          // Images: StaleWhileRevalidate - serve cached, update in background
+          // GLTF descriptor files - always NetworkFirst (these reference external textures)
+          {
+            urlPattern: /\.gltf$/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'gltf-descriptors',
+              networkTimeoutSeconds: 5,
+              expiration: {
+                maxEntries: 10,
+              },
+            },
+          },
+          // Images: StaleWhileRevalidate
           {
             urlPattern: /\.(?:png|jpg|jpeg|svg|gif|webp)$/i,
             handler: 'StaleWhileRevalidate',
@@ -66,11 +94,11 @@ export default defineConfig({
               cacheName: 'images',
               expiration: {
                 maxEntries: 60,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30,
               },
             },
           },
-          // Videos/Audio: CacheFirst - important for offline playback
+          // Audio/Video: CacheFirst
           {
             urlPattern: /\.(?:mp4|mpeg|mp3|m4a|wav|webm)$/i,
             handler: 'CacheFirst',
@@ -78,11 +106,11 @@ export default defineConfig({
               cacheName: 'media',
               expiration: {
                 maxEntries: 10,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+                maxAgeSeconds: 60 * 60 * 24 * 30,
               },
             },
           },
-          // Game data: NetworkFirst - get latest game data
+          // Game JSON data: NetworkFirst with short timeout to fail fast
           {
             urlPattern: /\.json$/i,
             handler: 'NetworkFirst',
@@ -91,47 +119,37 @@ export default defineConfig({
               networkTimeoutSeconds: 3,
               expiration: {
                 maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24, // 1 day
-              },
-            },
-          },
-          // External API calls: NetworkFirst with fallback
-          {
-            urlPattern: /^https:\/\/.*/i,
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'api-calls',
-              networkTimeoutSeconds: 5,
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24, // 1 day
+                maxAgeSeconds: 60 * 60 * 24,
               },
             },
           },
         ],
-        // Precache only essential assets (small files)
+
+        // ============================================
+        // PRECACHE OPTIMIZATION
+        // ============================================
         globPatterns: [
           '**/*.{js,css,html}',
           'favicon.ico',
-          '**/*.svg', // SVG icons
-          '**/*.{woff,woff2,ttf,eot}', // Fonts
+          '**/*.svg',
+          '**/*.{woff,woff2,ttf,eot}',
         ],
-        // Exclude large files from precache - let runtime caching handle them
+
         globIgnores: [
           '**/node_modules/**/*',
           '**/.vite/**/*',
           '**/dist/**/*',
-          // Exclude all large images from precache
-          '**/*.{jpg,jpeg,png,webp,avif}', // All raster images
-          '**/*.glb', // Exclude 3D models
-          '**/*.gltf', // Exclude 3D model descriptors
-          '**/*.mp4', // Exclude videos
-          '**/*.mpeg', // Exclude videos
-          '**/*.mp3', // Exclude audio
-          '**/*.m4a', // Exclude audio
-          '**/*.wav', // Exclude audio
-          '**/*.webm', // Exclude videos
+          '**/*.{jpg,jpeg,png,webp,avif}',
+          '**/*.glb',
+          '**/*.gltf',
+          '**/*.mp4',
+          '**/*.mpeg',
+          '**/*.mp3',
+          '**/*.m4a',
+          '**/*.wav',
+          '**/*.webm',
         ],
+
         cleanupOutdatedCaches: true,
         skipWaiting: true,
       },
