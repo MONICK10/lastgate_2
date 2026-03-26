@@ -4,11 +4,11 @@ import App from "./App";
 
 import { GameProvider } from "./context/GameContext";
 
-// Service Worker Registration for PWA
-if ('serviceWorker' in navigator) {
+// Service Worker Registration for PWA (only in production)
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
-      .register(import.meta.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js', {
+      .register('/sw.js', {
         scope: '/',
       })
       .then((registration) => {

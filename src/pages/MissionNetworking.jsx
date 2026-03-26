@@ -298,7 +298,6 @@ function Character({ playerRef, garageRef, onUpdatePosition }) {
   const walkGltf = useGLTF("/assets/elwalk1.glb");
   const runGltf = useGLTF("/assets/elrun1.glb");
   const jumpGltf = useGLTF("/assets/jump.glb");
-  const actionGltf = useGLTF("/assets/action.glb");
 
   const { actions: walkActions } = useAnimations(
     walkGltf.animations,
