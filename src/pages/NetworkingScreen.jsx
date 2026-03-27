@@ -553,6 +553,26 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
           </div>
         )}
 
+        {/* CLEAR STEP-BY-STEP INSTRUCTIONS */}
+        <div style={{backgroundColor: '#e3f2fd', padding: '15px', borderRadius: '5px', marginBottom: '15px', borderLeft: '4px solid #1976d2'}}>
+          <h4 style={{margin: '0 0 10px 0', color: '#0d47a1', fontSize: '15px'}}>📋 Configuration Steps:</h4>
+          {device === "ho-core-switch" ? (
+            <ol style={{margin: '0', paddingLeft: '20px', color: '#1565c0', lineHeight: '1.8', fontSize: '14px'}}>
+              <li><strong>Gi0/1:</strong> Set to <span style={{backgroundColor: '#fff3e0', padding: '2px 6px', borderRadius: '3px', fontWeight: 'bold'}}>Trunk Port</span></li>
+              <li><strong>Gi0/2:</strong> Set to <span style={{backgroundColor: '#fff3e0', padding: '2px 6px', borderRadius: '3px', fontWeight: 'bold'}}>Trunk Port</span></li>
+              <li><strong>Gi0/3:</strong> Set to <span style={{backgroundColor: '#fff3e0', padding: '2px 6px', borderRadius: '3px', fontWeight: 'bold'}}>Trunk Port</span></li>
+              <li style={{marginTop: '5px'}}>Click "Apply Configuration" when all 3 are set to Trunk</li>
+            </ol>
+          ) : (
+            <ol style={{margin: '0', paddingLeft: '20px', color: '#1565c0', lineHeight: '1.8', fontSize: '14px'}}>
+              <li><strong>Gi0/1 (Uplink):</strong> Set to <span style={{backgroundColor: '#fff3e0', padding: '2px 6px', borderRadius: '3px', fontWeight: 'bold'}}>Trunk Port</span></li>
+              <li><strong>Gi0/2 (Access):</strong> Set to <span style={{backgroundColor: '#fff3e0', padding: '2px 6px', borderRadius: '3px', fontWeight: 'bold'}}>Access Port</span></li>
+              <li><strong>VLAN ID:</strong> Select {device === "ho-access-switch-1" ? "VLAN 10" : device === "ho-access-switch-2" ? "VLAN 20" : "VLAN 30"} from dropdown</li>
+              <li style={{marginTop: '5px'}}>Click "Apply Configuration" when all settings are correct</li>
+            </ol>
+          )}
+        </div>
+
         {/* CONFIGURATION MESSAGE (Success or Error) - DISPLAYED INSIDE PANEL */}
         {configMessage && (
           <>
@@ -704,11 +724,39 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
           {/* VLAN CONFIGURATION STATUS */}
           <div className="config-section" style={{backgroundColor: '#f0f8ff', padding: '15px', borderRadius: '5px', marginTop: '15px', borderLeft: '4px solid #2196F3'}}>
             <h4 style={{margin: '0 0 10px 0', color: '#0277bd'}}>📊 Configuration Status</h4>
-            <ul style={{margin: '0', paddingLeft: '20px', fontSize: '14px', color: '#555'}}>
-              <li>{config.interfaces?.Gi0_1?.mode ? '✅' : '⏳'} Gi0/1 (Uplink): {config.interfaces?.Gi0_1?.mode || 'Not configured'}</li>
-              <li>{config.interfaces?.Gi0_2?.mode && (config.interfaces?.Gi0_2?.mode === 'trunk' || config.interfaces?.Gi0_2?.vlan) ? '✅' : '⏳'} Gi0/2 (Access): {config.interfaces?.Gi0_2?.mode || 'Not configured'} {config.interfaces?.Gi0_2?.vlan ? `[VLAN ${config.interfaces?.Gi0_2?.vlan}]` : ''}</li>
-              {device === "ho-core-switch" && (
-                <li>{config.interfaces?.Gi0_3?.mode ? '✅' : '⏳'} Gi0/3 (Uplink): {config.interfaces?.Gi0_3?.mode || 'Not configured'}</li>
+            <ul style={{margin: '0', paddingLeft: '20px', fontSize: '14px', color: '#555', lineHeight: '1.8'}}>
+              {device === "ho-core-switch" ? (
+                <>
+                  <li>
+                    {config.interfaces?.Gi0_1?.mode === "trunk" ? '✅' : '⏳'} 
+                    <strong> Gi0/1 (Uplink):</strong> {config.interfaces?.Gi0_1?.mode || 'Not set'} 
+                    {config.interfaces?.Gi0_1?.mode !== "trunk" && ' — REQUIRED: Trunk Port'}
+                  </li>
+                  <li>
+                    {config.interfaces?.Gi0_2?.mode === "trunk" ? '✅' : '⏳'} 
+                    <strong> Gi0/2 (Uplink):</strong> {config.interfaces?.Gi0_2?.mode || 'Not set'} 
+                    {config.interfaces?.Gi0_2?.mode !== "trunk" && ' — REQUIRED: Trunk Port'}
+                  </li>
+                  <li>
+                    {config.interfaces?.Gi0_3?.mode === "trunk" ? '✅' : '⏳'} 
+                    <strong> Gi0/3 (Uplink):</strong> {config.interfaces?.Gi0_3?.mode || 'Not set'} 
+                    {config.interfaces?.Gi0_3?.mode !== "trunk" && ' — REQUIRED: Trunk Port'}
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li>
+                    {config.interfaces?.Gi0_1?.mode === "trunk" ? '✅' : '⏳'} 
+                    <strong> Gi0/1 (Uplink):</strong> {config.interfaces?.Gi0_1?.mode || 'Not set'} 
+                    {config.interfaces?.Gi0_1?.mode !== "trunk" && ' — REQUIRED: Trunk Port'}
+                  </li>
+                  <li>
+                    {config.interfaces?.Gi0_2?.mode === "access" && config.interfaces?.Gi0_2?.vlan ? '✅' : '⏳'} 
+                    <strong> Gi0/2 (Access):</strong> {config.interfaces?.Gi0_2?.mode || 'Not set'} 
+                    {config.interfaces?.Gi0_2?.vlan ? `[VLAN ${config.interfaces?.Gi0_2?.vlan}]` : ' [VLAN not set]'}
+                    {config.interfaces?.Gi0_2?.mode !== "access" && ' — REQUIRED: Access Port'}
+                  </li>
+                </>
               )}
             </ul>
           </div>
@@ -1126,60 +1174,82 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
 
           {/* ACTIONS */}
           <div className="config-section">
-            <h4>⚙️ Network Actions</h4>
+            <h4>⚙️ Network Actions - Follow Steps in Order:</h4>
 
-            <button
-              className="btn-network-action"
-              onClick={() => {
-                if (isDuplicateIP) {
-                  setConfigMessage({ type: "error", text: "❌ Cannot save: Duplicate IP detected. Change IP to 192.168.1.51" });
-                } else if (!isValidSubnet || !isValidGateway) {
-                  setConfigMessage({ type: "error", text: "❌ Invalid network settings. Check subnet and gateway." });
-                } else {
-                  setConfigMessage({ type: "success", text: "✅ Network configuration saved" });
-                }
-              }}
-              style={{marginBottom: '10px'}}
-            >
-              💾 Save Configuration
-            </button>
-
-            <button
-              className="btn-network-action"
-              onClick={() => {
-                if (isDuplicateIP || !isValidSubnet || !isValidGateway) {
-                  setConfigMessage({ type: "error", text: "❌ Cannot restart: Fix configuration errors first" });
-                } else {
-                  setPcConfig({ ...pcConfig, networkRestarted: true });
-                  setConfigMessage({ type: "success", text: "🔄 Network restarted successfully" });
-                }
-              }}
-              style={{marginBottom: '10px'}}
-            >
-              🔄 Restart Network
-            </button>
-
-            <button
-              className="btn-network-action"
-              onClick={() => {
-                if (isDuplicateIP) {
-                  setConfigMessage({ type: "error", text: "❌ Conflict detected: 192.168.1.25 used by multiple devices" });
-                } else {
-                  if (isFullyConfigured) {
-                    setConfigMessage({ type: "success", text: "✅ ARP Table verified: No IP conflicts detected" });
-                    setSolvedProblems(new Set([...solvedProblems, 8]));
-                    setSignalStrength(prev => Math.min(100, prev + 9));
-                    addStoryPopup("✅ IP conflict resolved!", "left", "info");
-                    addStoryPopup("Eleven: Network stability restored...", "right", "info");
-                    setConfigMessage({ type: "success", text: "✅ Problem 8 solved! Duplicate IP issue resolved." });
+            {/* STEP 1 */}
+            <div style={{marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px solid #e0e0e0'}}>
+              <div style={{display: 'flex', alignItems: 'center', marginBottom: '8px'}}>
+                <span style={{backgroundColor: '#1976d2', color: 'white', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', marginRight: '10px'}}>1</span>
+                <span style={{fontSize: '15px', fontWeight: '600', color: '#333'}}>Save Configuration</span>
+              </div>
+              <button
+                className="btn-network-action"
+                onClick={() => {
+                  if (isDuplicateIP) {
+                    setConfigMessage({ type: "error", text: "❌ Cannot save: Duplicate IP detected. Change IP to 192.168.1.51" });
+                  } else if (!isValidSubnet || !isValidGateway) {
+                    setConfigMessage({ type: "error", text: "❌ Invalid network settings. Check subnet and gateway." });
                   } else {
-                    setConfigMessage({ type: "error", text: "⚠️ Complete all configuration steps first" });
+                    setConfigMessage({ type: "success", text: "✅ Network configuration saved" });
                   }
-                }
-              }}
-            >
-              🔍 Check ARP Table
-            </button>
+                }}
+                style={{width: '100%', marginLeft: '40px'}}
+              >
+                💾 Save Configuration
+              </button>
+            </div>
+
+            {/* STEP 2 */}
+            <div style={{marginBottom: '15px', paddingBottom: '15px', borderBottom: '1px solid #e0e0e0'}}>
+              <div style={{display: 'flex', alignItems: 'center', marginBottom: '8px'}}>
+                <span style={{backgroundColor: '#f57c00', color: 'white', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', marginRight: '10px'}}>2</span>
+                <span style={{fontSize: '15px', fontWeight: '600', color: '#333'}}>Restart Network</span>
+              </div>
+              <button
+                className="btn-network-action"
+                onClick={() => {
+                  if (isDuplicateIP || !isValidSubnet || !isValidGateway) {
+                    setConfigMessage({ type: "error", text: "❌ Cannot restart: Fix configuration errors first" });
+                  } else {
+                    setPcConfig({ ...pcConfig, networkRestarted: true });
+                    setConfigMessage({ type: "success", text: "🔄 Network restarted successfully" });
+                  }
+                }}
+                style={{width: '100%', marginLeft: '40px'}}
+              >
+                🔄 Restart Network
+              </button>
+            </div>
+
+            {/* STEP 3 */}
+            <div style={{marginBottom: '15px'}}>
+              <div style={{display: 'flex', alignItems: 'center', marginBottom: '8px'}}>
+                <span style={{backgroundColor: '#388e3c', color: 'white', borderRadius: '50%', width: '30px', height: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', marginRight: '10px'}}>3</span>
+                <span style={{fontSize: '15px', fontWeight: '600', color: '#333'}}>Check ARP Table</span>
+              </div>
+              <button
+                className="btn-network-action"
+                onClick={() => {
+                  if (isDuplicateIP) {
+                    setConfigMessage({ type: "error", text: "❌ Conflict detected: 192.168.1.25 used by multiple devices" });
+                  } else {
+                    if (isFullyConfigured) {
+                      setConfigMessage({ type: "success", text: "✅ ARP Table verified: No IP conflicts detected" });
+                      setSolvedProblems(new Set([...solvedProblems, 8]));
+                      setSignalStrength(prev => Math.min(100, prev + 9));
+                      addStoryPopup("✅ IP conflict resolved!", "left", "info");
+                      addStoryPopup("Eleven: Network stability restored...", "right", "info");
+                      setConfigMessage({ type: "success", text: "✅ Problem 8 solved! Duplicate IP issue resolved." });
+                    } else {
+                      setConfigMessage({ type: "error", text: "⚠️ Complete all configuration steps first" });
+                    }
+                  }
+                }}
+                style={{width: '100%', marginLeft: '40px'}}
+              >
+                🔍 Check ARP Table
+              </button>
+            </div>
           </div>
 
           {/* CONFIGURATION CHECKLIST */}
@@ -1302,7 +1372,7 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
 
           {/* VERIFICATION SECTION */}
           <div className="config-section">
-            <h4>✓ Verification</h4>
+            <h4>✓ Verification & Actions</h4>
 
             <button
               className="btn-verify-interface"
@@ -1324,9 +1394,52 @@ function DeviceConfigPanel({ device, config, onConfigChange, onClose, onApply, v
                   }
                 }
               }}
+              style={{marginBottom: '15px', width: '100%'}}
             >
               Check Interface Status
             </button>
+
+            {/* ACTION STEPS FOR PROBLEM 9 */}
+            <div style={{backgroundColor: '#f3e5f5', padding: '15px', borderRadius: '5px', borderLeft: '4px solid #7b1fa2'}}>
+              <h4 style={{margin: '0 0 12px 0', color: '#4a148c', fontSize: '14px'}}>🔧 Fix All Shutdown Interfaces:</h4>
+              <ol style={{margin: '0', paddingLeft: '25px', fontSize: '13px', color: '#5e35b1', lineHeight: '2'}}>
+                <li>
+                  <strong>Mike's House Switch (Gi0/1):</strong> 
+                  {interfaceState["ho-access-switch-1"]?.Gi0_1 === "no shutdown" ? (
+                    <span style={{marginLeft: '8px', backgroundColor: '#4caf50', color: 'white', padding: '2px 8px', borderRadius: '3px', fontSize: '12px'}}>✅ ACTIVE</span>
+                  ) : (
+                    <span style={{marginLeft: '8px', backgroundColor: '#ff9800', color: 'white', padding: '2px 8px', borderRadius: '3px', fontSize: '12px'}}>⏳ Need to enable</span>
+                  )}
+                </li>
+                <li>
+                  <strong>Dustin's House Switch (Gi0/1):</strong> 
+                  {interfaceState["ho-access-switch-2"]?.Gi0_1 === "no shutdown" ? (
+                    <span style={{marginLeft: '8px', backgroundColor: '#4caf50', color: 'white', padding: '2px 8px', borderRadius: '3px', fontSize: '12px'}}>✅ ACTIVE</span>
+                  ) : (
+                    <span style={{marginLeft: '8px', backgroundColor: '#ff9800', color: 'white', padding: '2px 8px', borderRadius: '3px', fontSize: '12px'}}>⏳ Need to enable</span>
+                  )}
+                </li>
+                <li>
+                  <strong>Lucas's House Switch (Gi0/1):</strong> 
+                  {interfaceState["ho-access-switch-3"]?.Gi0_1 === "no shutdown" ? (
+                    <span style={{marginLeft: '8px', backgroundColor: '#4caf50', color: 'white', padding: '2px 8px', borderRadius: '3px', fontSize: '12px'}}>✅ ACTIVE</span>
+                  ) : (
+                    <span style={{marginLeft: '8px', backgroundColor: '#ff9800', color: 'white', padding: '2px 8px', borderRadius: '3px', fontSize: '12px'}}>⏳ Need to enable</span>
+                  )}
+                </li>
+              </ol>
+              
+              {/* PROGRESS */}
+              <div style={{marginTop: '15px', paddingTop: '12px', borderTop: '1px solid #ce93d8'}}>
+                <div style={{display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', fontWeight: 'bold', color: '#4a148c'}}>
+                  <span>Progress:</span>
+                  <div style={{flex: 1, height: '6px', backgroundColor: '#e1bee7', borderRadius: '3px', overflow: 'hidden'}}>
+                    <div style={{height: '100%', backgroundColor: '#7b1fa2', width: `${(Object.values(interfaceState).filter(s => s?.Gi0_1 === "no shutdown").length / 3) * 100}%`, transition: 'width 0.3s'}}></div>
+                  </div>
+                  <span>{Object.values(interfaceState).filter(s => s?.Gi0_1 === "no shutdown").length}/3 Complete</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* STATUS SUMMARY */}
